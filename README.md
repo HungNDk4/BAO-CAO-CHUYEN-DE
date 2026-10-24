@@ -8,13 +8,13 @@
   2. Thành viên 2 - Quản trị quy trình phần mềm (Jira Kanban) & Thiết kế mô hình Use Case / Activity Diagram
   3. Thành viên 3 - Đảm bảo chất lượng (QA/Tester) & Khảo sát giao diện người dùng (Storefront / Admin)
   4. Thành viên 4 - Khảo sát cấu trúc dữ liệu, trích xuất & phân tích lược đồ quan hệ thực thể (ERD)
-  5. Thành viên 5 - Kỹ thuật CSDL nâng cao (Bảo mật băm Bcrypt, Cloud Media Offloading, Full-text Search)
+  5. Thành viên 5 - Kỹ thuật CSDL nâng cao (Bảo mật băm Bcrypt, Cloud Media Offloading với Cloudinary CDN, Full-text Search)
 
 ---
 
 ## 2. TUYÊN BỐ LIÊM CHÍNH HỌC THUẬT (ACADEMIC INTEGRITY)
 Hệ thống mã nguồn này được kế thừa và triển khai thực nghiệm dựa trên nền tảng thương mại điện tử mã nguồn mở **Bagisto (Laravel Framework + Vue.js)**. Nhóm sử dụng hệ sinh thái này làm **môi trường thực nghiệm đối chứng** nhằm phục vụ công tác phân tích, đánh giá học thuật chuyên sâu cho 02 học phần:
-* **Chuyên đề 1 (Hệ Quản Trị Cơ Sở Dữ Liệu):** Khảo sát cấu trúc quan hệ RDBMS, mô hình hóa dữ liệu (ERD), đánh giá cơ chế bảo mật mật khẩu một chiều (Bcrypt), phân tích kiến trúc bảng phẳng `product_flat`, đề xuất giải pháp tách tải dữ liệu Media lên Cloud (Cloudinary/AWS S3) và tối ưu hóa truy vấn Full-text Search tiếng Việt.
+* **Chuyên đề 1 (Hệ Quản Trị Cơ Sở Dữ Liệu):** Khảo sát cấu trúc quan hệ RDBMS, mô hình hóa dữ liệu (ERD), đánh giá cơ chế bảo mật mật khẩu một chiều (Bcrypt), phân tích kiến trúc bảng phẳng `product_flat`, triển khai giải pháp tách tải dữ liệu Media lên Cloud (**Cloudinary CDN Dual-Storage**) và tối ưu hóa truy vấn Full-text Search tiếng Việt.
 * **Chuyên đề 2 (Quy Trình & Phát Triển Phần Mềm):** Thiết lập quy trình phát triển phần mềm theo mô hình Agile/Kanban trên Jira Software, quản trị phiên bản và luồng đóng góp mã nguồn qua Git/GitHub, mô hình hóa phân rã chức năng qua sơ đồ Use Case và Activity Diagram, thực thi bộ kịch bản kiểm thử hộp đen (15–20 Test Cases chức năng).
 
 ---
@@ -23,6 +23,7 @@ Hệ thống mã nguồn này được kế thừa và triển khai thực nghi�
 * **Backend:** PHP 8.3, Laravel 12.x
 * **Frontend:** Blade Template, Vue.js, Tailwind CSS
 * **Database:** MySQL 8.x / MariaDB (Hệ quản trị CSDL quan hệ RDBMS)
+* **Cloud Storage & CDN:** Cloudinary CDN Media Storage (Tự động phân nhóm thư mục: `product/`, `category/`, `channel/`, `themes/`)
 * **Công cụ hỗ trợ & Vận hành:** Laragon, HeidiSQL, DBeaver, Git, Jira Software, Ngrok
 
 ---
@@ -35,7 +36,7 @@ Hệ thống mã nguồn này được kế thừa và triển khai thực nghi�
 
 ### Yêu cầu môi trường tiên quyết (Laragon):
 1. Khởi động **Laragon**, bấm **Start All** (chạy Apache và MySQL).
-2. Kích hoạt đủ 5 Extension PHP bắt buộc: Chuột phải trên giao diện Laragon -> **PHP** -> **Extensions** -> Đảm bảo đã tích chọn: `pdo_mysql`, `fileinfo`, `intl`, `gd`, `zip`.
+2. Kích hoạt đủ 5 Extension PHP bắt buộc: Chuột phải trên giao diện Laragon -> **PHP** -> **Extensions** -> Đảm bảo đã tích chọn: `pdo_mysql`, `fileinfo`, `intl`, `gd`, `zip`, `curl`.
 
 ---
 
@@ -80,7 +81,29 @@ Script này sẽ tự động xử lý toàn bộ các khâu kỹ thuật:
 
 *(Kiểm tra nhanh file `.env`: Đảm bảo `DB_DATABASE=bagisto_db` và `APP_URL=http://127.0.0.1:8000`).*
 
-### BƯỚC 5: KHỞI CHẠY MÁY CHỦ
+---
+
+### BƯỚC 5: CẤU HÌNH CLOUD MEDIA (CLOUDINARY STORAGE)
+Hệ thống đã được tích hợp sẵn cơ chế **Cloud Media Offloading**. Mở tệp `.env` và kiểm tra cấu hình:
+
+```env
+FILESYSTEM_DISK=cloudinary
+
+CLOUDINARY_CLOUD_NAME=lwjl35m1
+CLOUDINARY_KEY=579129583359143
+CLOUDINARY_SECRET=DmWyo8QE9y8IFAUjjwpLPB5VXao
+```
+
+#### Lệnh đồng bộ hình ảnh lên Cloudinary:
+Để tải toàn bộ kho ảnh thực nghiệm (sản phẩm, danh mục, banner, logo kênh) lên Cloudinary:
+```bash
+php artisan cloudinary:sync-local-images
+```
+*(Hoặc dùng cờ `--force` nếu muốn ghi đè và tự động sắp xếp lại cấu trúc thư mục trên Cloudinary: `php artisan cloudinary:sync-local-images --force`).*
+
+---
+
+### BƯỚC 6: KHỞI CHẠY MÁY CHỦ
 Tại Terminal Laragon, chạy:
 ```bash
 php artisan serve
@@ -97,7 +120,20 @@ php artisan serve
 
 ---
 
-## 6. QUY TRÌNH ĐỒNG BỘ DỮ LIỆU KHI CÓ CẬP NHẬT MỚI (DÀNH CHO NHÓM)
+## 6. KIẾN TRÚC LƯU TRỮ ĐÁM MÂY (CLOUDINARY ADAPTER)
+Nhóm phát triển custom adapter tại `app/Filesystem/CloudinaryStorageAdapter.php` với các tính năng vượt trội:
+1. **Local-first Dual Storage**: Lưu 1 bản an toàn tại local `storage/app/public/...` trước khi upload Cloudinary. Giúp thao tác lưu sản phẩm/danh mục ở Admin không bao giờ bị gián đoạn (không gặp lỗi 500 khi mạng yếu).
+2. **Tự động gom thư mục (Asset Folders)**: Tự động trích xuất thư mục theo loại dữ liệu và gán `asset_folder`:
+   - `product/`: Ảnh sản phẩm & thư viện ảnh.
+   - `category/`: Logo & Banner danh mục.
+   - `channel/`: Logo website & Favicon.
+   - `themes/`: Banner quảng cáo, Slider trang chủ.
+3. **Tối ưu hóa Guzzle cURL Client**: Khắc phục lỗi `cURL 35/56 Connection reset` trên Windows bằng cách cưỡng chế IPv4, HTTP/1.1 và vô hiệu hóa socket reuse chập chờn.
+4. **Cơ chế Retry thông minh**: Tự động thử lại tối đa 3 lần khi đường truyền quốc tế bị ngắt quãng.
+
+---
+
+## 7. QUY TRÌNH ĐỒNG BỘ DỮ LIỆU KHI CÓ CẬP NHẬT MỚI (DÀNH CHO NHÓM)
 
 ### Dành cho người thêm dữ liệu (Thêm sản phẩm, đổi banner, sửa logo qua Admin):
 1. Vào HeidiSQL, xuất đè database mới ra tệp `mockdata/database_final.sql` (bỏ chọn Drop/Create Database, tích chọn Drop/Create Table, chọn Data: Insert).
@@ -115,10 +151,15 @@ git pull origin main
 ```
 2. Mở HeidiSQL nạp lại tệp `mockdata/database_final.sql` vào `bagisto_db` (nhấn **F9**).
 3. Chạy lại file `setup.bat` để script tự động copy hình ảnh mới vào `public/storage`.
+4. (Tùy chọn) Chạy `php artisan cloudinary:sync-local-images` để đồng bộ ảnh lên Cloudinary nếu dùng cấu hình Cloud.
 
 ---
 
-## 7. XỬ LÝ SỰ CỐ THƯỜNG GẶP (TROUBLESHOOTING)
+## 8. XỬ LÝ SỰ CỐ THƯỜNG GẶP (TROUBLESHOOTING)
+
+* **Lỗi `cURL error 35: Recv failure: Connection was reset` hoặc `cURL error 28: Timeout`:**
+  * **Nguyên nhân:** Do mạng gia đình tại VN kết nối tới máy chủ Cloudinary (Mỹ) bị chập chờn.
+  * **Khắc phục:** Hệ thống đã được tích hợp cơ chế Dual-Storage an toàn. File luôn được lưu tại local ổ cứng trước nên trang Admin vẫn lưu thành công. Bạn có thể chạy lại `php artisan cloudinary:sync-local-images` bất cứ lúc nào mạng ổn định hơn.
 
 * **Lỗi ảnh banner bị trắng / chỉ hiện chữ n1:**
   * **Nguyên nhân:** Do chưa bật PHP Extension `gd` hoặc chưa đồng bộ thư mục ảnh sang `public/storage`.
