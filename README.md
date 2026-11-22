@@ -3,108 +3,63 @@
 ## 1. THÔNG TIN ĐỀ TÀI & NHÓM THỰC HIỆN
 * **Tên đề tài:** Nghiên cứu kiến trúc, quy trình phát triển và tối ưu hóa hệ quản trị cơ sở dữ liệu cho hệ thống thương mại điện tử chuyên nghiệp.
 * **Thời gian thực hiện:** Tháng 09/2026 – Tháng 10/2026
-* **Danh sách thành viên nhóm:**
-  1. Nguyễn Duy Hùng (Leader / Tech Lead) - Quản trị mã nguồn, hạ tầng & cơ sở dữ liệu mẫu
-  2. Thành viên 2 - Quản trị quy trình phần mềm (Jira Kanban) & Thiết kế mô hình Use Case / Activity Diagram
-  3. Thành viên 3 - Đảm bảo chất lượng (QA/Tester) & Khảo sát giao diện người dùng (Storefront / Admin)
-  4. Thành viên 4 - Khảo sát cấu trúc dữ liệu, trích xuất & phân tích lược đồ quan hệ thực thể (ERD)
-  5. Thành viên 5 - Kỹ thuật CSDL nâng cao (Bảo mật băm Bcrypt, Cloud Media Offloading với Cloudinary CDN, Full-text Search)
+* **Danh sách thành viên nhóm (02 thành viên):**
+  1. **Nguyễn Duy Hùng** (Leader / Tech Lead) - Quản trị mã nguồn, hạ tầng, cơ sở dữ liệu & tích hợp hệ thống
+  2. **Phát** - Phát triển chức năng, kiểm thử hệ thống & tối ưu hóa cơ sở dữ liệu
 
 ---
 
 ## 2. TUYÊN BỐ LIÊM CHÍNH HỌC THUẬT (ACADEMIC INTEGRITY)
-Hệ thống mã nguồn này được kế thừa và triển khai thực nghiệm dựa trên nền tảng thương mại điện tử mã nguồn mở **Bagisto (Laravel Framework + Vue.js)**. Nhóm sử dụng hệ sinh thái này làm **môi trường thực nghiệm đối chứng** nhằm phục vụ công tác phân tích, đánh giá học thuật chuyên sâu cho 02 học phần:
-* **Chuyên đề 1 (Hệ Quản Trị Cơ Sở Dữ Liệu):** Khảo sát cấu trúc quan hệ RDBMS, mô hình hóa dữ liệu (ERD), đánh giá cơ chế bảo mật mật khẩu một chiều (Bcrypt), phân tích kiến trúc bảng phẳng `product_flat`, triển khai giải pháp tách tải dữ liệu Media lên Cloud (**Cloudinary CDN Dual-Storage**) và tối ưu hóa truy vấn Full-text Search tiếng Việt.
-* **Chuyên đề 2 (Quy Trình & Phát Triển Phần Mềm):** Thiết lập quy trình phát triển phần mềm theo mô hình Agile/Kanban trên Jira Software, quản trị phiên bản và luồng đóng góp mã nguồn qua Git/GitHub, mô hình hóa phân rã chức năng qua sơ đồ Use Case và Activity Diagram, thực thi bộ kịch bản kiểm thử hộp đen (15–20 Test Cases chức năng).
+* **Kế thừa mã nguồn mở:** Hệ thống được phát triển và kế thừa dựa trên nền tảng thương mại điện tử mã nguồn mở **Bagisto** (bản quyền thuộc Webkul Software Pvt. Ltd., phát hành theo giấy phép mã nguồn mở MIT) làm **môi trường thực nghiệm đối chứng** phục vụ mục đích nghiên cứu, học thuật và báo cáo chuyên đề.
+* **Mục đích dữ liệu và hình ảnh:** Toàn bộ dữ liệu sản phẩm, hình ảnh, banner và thương hiệu minh họa trong hệ thống được sử dụng thuần túy cho mục đích nghiên cứu học thuật phi thương mại, không có bất kỳ giá trị thương mại hay giao dịch thực tế nào.
+* **Tài khoản quản trị demo:** Tài khoản quản trị viên (`admin@example.com` / `admin123`) chỉ là tài khoản mẫu thử nghiệm cục bộ trên môi trường phát triển (Local Development Environment), không đại diện cho bất kỳ tài khoản thực tế nào ngoài thực tế.
 
 ---
 
 ## 3. CÔNG NGHỆ SỬ DỤNG
 * **Backend:** PHP 8.3, Laravel 12.x
 * **Frontend:** Blade Template, Vue.js, Tailwind CSS
-* **Database:** MySQL 8.x / MariaDB (Hệ quản trị CSDL quan hệ RDBMS)
-* **Cloud Storage & CDN:** Cloudinary CDN Media Storage (Tự động phân nhóm thư mục: `product/`, `category/`, `channel/`, `themes/`)
-* **Công cụ hỗ trợ & Vận hành:** Laragon, HeidiSQL, DBeaver, Git, Jira Software, Ngrok
+* **Database:** MySQL 8.x / MariaDB (RDBMS)
+* **Cloud Storage & CDN (Tùy chọn):** Cloudinary CDN Media Storage
+* **Công cụ hỗ trợ & Vận hành:** Laragon, HeidiSQL, DBeaver, Git, Jira Software
 
 ---
 
-## 4. HƯỚNG DẪN CÀI ĐẶT DỰ ÁN 1-CLICK (DÀNH CHO THÀNH VIÊN)
-> **LƯU Ý QUAN TRỌNG:**
-> * Nhóm thống nhất **sử dụng 100% môi trường Laragon** trên Windows để đồng bộ cấu hình, tránh lỗi sai lệch đường dẫn và thiếu extension PHP.
-> * Cơ sở dữ liệu chuẩn kèm danh mục, banner và sản phẩm thực nghiệm đã được kết xuất sẵn trong tệp: `mockdata/database_final.sql`.
-> * Thành viên **TUYỆT ĐỐI KHÔNG** chạy các lệnh `php artisan bagisto:install` hoặc `php artisan migrate:fresh` để tránh xung đột môi trường và làm hỏng cấu trúc dữ liệu của nhóm.
+## 4. HƯỚNG DẪN CÀI ĐẶT DỰ ÁN (POST-CLONE SETUP)
+> **Yêu cầu môi trường tiên quyết:** Máy tính Windows cài đặt **Laragon** (PHP >= 8.3, MySQL >= 8.0, Composer). Các PHP extension cần bật: `pdo_mysql`, `fileinfo`, `intl`, `gd`, `zip`, `curl`.
 
-### Yêu cầu môi trường tiên quyết (Laragon):
-1. Khởi động **Laragon**, bấm **Start All** (chạy Apache và MySQL).
-2. Kích hoạt đủ 5 Extension PHP bắt buộc: Chuột phải trên giao diện Laragon -> **PHP** -> **Extensions** -> Đảm bảo đã tích chọn: `pdo_mysql`, `fileinfo`, `intl`, `gd`, `zip`, `curl`.
+Thực hiện lần lượt các bước sau sau khi clone mã nguồn:
 
----
-
-### BƯỚC 1: CLONE MÃ NGUỒN VỀ MÁY
-Mở cửa sổ dòng lệnh bằng cách bấm nút **Terminal** trên giao diện chính của Laragon (để nạp sẵn PATH của PHP và Composer), sau đó chạy:
+### Bước 1: Clone mã nguồn
 ```bash
-git clone https://github.com/HungNDk4/chuyen-de-ecomerce-bagisto.git
-cd chuyen-de-ecomerce-bagisto
+git clone https://github.com/HungNDk4/BAO-CAO-CHUYEN-DE.git
+cd BAO-CAO-CHUYEN-DE
 ```
 
-### BƯỚC 2: CÀI ĐẶT THƯ VIỆN PHỤ THUỘC (VENDOR)
-Tại cửa sổ Terminal Laragon, chạy:
+### Bước 2: Cài đặt thư viện phụ thuộc (Vendor)
+Mở **Terminal** trong Laragon và chạy:
 ```bash
 composer install
 ```
-*(Nếu phần mềm diệt virus quét làm kẹt file tạm thời, hãy đóng các ứng dụng soạn thảo và chạy lại lệnh).*
 
-### BƯỚC 3: TẠO DATABASE & IMPORT DỮ LIỆU THỰC NGHIỆM
-Chọn 1 trong 2 cách sau:
+### Bước 3: Tạo cơ sở dữ liệu trống & nạp dữ liệu mẫu
+1. Mở **HeidiSQL** (hoặc công cụ MySQL quản trị bất kỳ), tạo một database mới tên: `bagisto_perfume` với bảng mã `utf8mb4_unicode_ci`.
+2. Nạp tệp SQL dữ liệu mẫu từ thư mục `mockdata/` (ví dụ `mockdata/database_final.sql`):
+   - **Cách 1 (HeidiSQL):** Chọn database `bagisto_perfume` -> Nhấn **Ctrl + O** -> Chọn `mockdata/database_final.sql` -> Nhấn **F9** để thực thi.
+   - **Cách 2 (Terminal Laragon):**
+     ```bash
+     mysql -u root -e "CREATE DATABASE IF NOT EXISTS bagisto_perfume CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+     mysql -u root bagisto_perfume < mockdata/database_final.sql
+     ```
 
-#### Cách A: Dùng HeidiSQL trực quan (Khuyên dùng)
-1. Trên Laragon, bấm nút **Database** (HeidiSQL sẽ mở lên) -> bấm **Open** để kết nối MySQL root (mật khẩu để trống).
-2. Nhấp chuột phải vào cột danh sách CSDL bên trái -> chọn **Create new** -> chọn **Database**:
-   * **Đặt tên:** `bagisto_db`
-   * **Bảng mã (Collation):** chọn `utf8mb4_unicode_ci` -> Bấm **OK**.
-3. Bấm chọn database `bagisto_db` vừa tạo -> Nhấn tổ hợp phím **Ctrl + O** -> Chọn tệp `mockdata/database_final.sql`.
-4. Bấm phím **F9** (Execute) để thực thi nạp dữ liệu (mất khoảng 5 giây). Nhấn **F5** kiểm tra danh sách bảng đã nạp thành công.
-
-#### Cách B: Nạp trực tiếp qua Terminal Laragon
-```bash
-mysql -u root -e "DROP DATABASE IF EXISTS bagisto_db; CREATE DATABASE bagisto_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root bagisto_db < mockdata/database_final.sql
+### Bước 4: Chạy tập lệnh thiết lập tự động (`setup.bat`)
+Nhấp đúp chuột vào tệp `setup.bat` ở thư mục gốc (hoặc chạy trong Terminal):
+```cmd
+.\setup.bat
 ```
+*Tập lệnh sẽ tự động tạo tệp `.env` chuẩn, sinh `APP_KEY`, đồng bộ tài nguyên hình ảnh từ `storage/app/public/` sang `public/storage/` và dọn sạch bộ nhớ đệm (`php artisan optimize:clear`).*
 
-### BƯỚC 4: THIẾT LẬP MÔI TRƯỜNG TỰ ĐỘNG (1-CLICK SETUP)
-Tại thư mục gốc của dự án, nhấp đúp chuột vào file `setup.bat` (hoặc chạy `.\setup.bat` trong Terminal).
-
-Script này sẽ tự động xử lý toàn bộ các khâu kỹ thuật:
-* Tự sinh file `.env` chuẩn hóa từ `.env.example` và tạo `APP_KEY`.
-* Khắc phục dứt điểm lỗi Symlink trên Windows bằng cách sao chép trực tiếp kho tài nguyên ảnh từ `storage/app/public/` sang `public/storage/`.
-* Tự động xóa sạch toàn bộ cache hệ thống (`optimize:clear`).
-
-*(Kiểm tra nhanh file `.env`: Đảm bảo `DB_DATABASE=bagisto_db` và `APP_URL=http://127.0.0.1:8000`).*
-
----
-
-### BƯỚC 5: CẤU HÌNH CLOUD MEDIA (CLOUDINARY STORAGE)
-Hệ thống đã được tích hợp sẵn cơ chế **Cloud Media Offloading**. Mở tệp `.env` và kiểm tra cấu hình:
-
-```env
-FILESYSTEM_DISK=cloudinary
-
-CLOUDINARY_CLOUD_NAME=lwjl35m1
-CLOUDINARY_KEY=579129583359143
-CLOUDINARY_SECRET=DmWyo8QE9y8IFAUjjwpLPB5VXao
-```
-
-#### Lệnh đồng bộ hình ảnh lên Cloudinary:
-Để tải toàn bộ kho ảnh thực nghiệm (sản phẩm, danh mục, banner, logo kênh) lên Cloudinary:
-```bash
-php artisan cloudinary:sync-local-images
-```
-*(Hoặc dùng cờ `--force` nếu muốn ghi đè và tự động sắp xếp lại cấu trúc thư mục trên Cloudinary: `php artisan cloudinary:sync-local-images --force`).*
-
----
-
-### BƯỚC 6: KHỞI CHẠY MÁY CHỦ
-Tại Terminal Laragon, chạy:
+### Bước 5: Khởi chạy máy chủ
 ```bash
 php artisan serve
 ```
@@ -113,62 +68,53 @@ php artisan serve
 
 ## 5. THÔNG TIN TRUY CẬP HỆ THỐNG & TÀI KHOẢN MẪU
 * **Giao diện người dùng (Storefront):** [http://127.0.0.1:8000](http://127.0.0.1:8000)
-  *(Dành cho Thành viên 3 khảo sát giao diện, giỏ hàng, checkout và thực thi 15–20 ca kiểm thử Test Cases)*
 * **Giao diện quản trị (Admin Panel):** [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
   * **Email đăng nhập:** `admin@example.com`
   * **Mật khẩu (Password):** `admin123`
+  *(Tài khoản demo cục bộ dùng cho thực nghiệm)*
 
 ---
 
-## 6. KIẾN TRÚC LƯU TRỮ ĐÁM MÂY (CLOUDINARY ADAPTER)
-Nhóm phát triển custom adapter tại `app/Filesystem/CloudinaryStorageAdapter.php` với các tính năng vượt trội:
-1. **Local-first Dual Storage**: Lưu 1 bản an toàn tại local `storage/app/public/...` trước khi upload Cloudinary. Giúp thao tác lưu sản phẩm/danh mục ở Admin không bao giờ bị gián đoạn (không gặp lỗi 500 khi mạng yếu).
-2. **Tự động gom thư mục (Asset Folders)**: Tự động trích xuất thư mục theo loại dữ liệu và gán `asset_folder`:
-   - `product/`: Ảnh sản phẩm & thư viện ảnh.
-   - `category/`: Logo & Banner danh mục.
-   - `channel/`: Logo website & Favicon.
-   - `themes/`: Banner quảng cáo, Slider trang chủ.
-3. **Tối ưu hóa Guzzle cURL Client**: Khắc phục lỗi `cURL 35/56 Connection reset` trên Windows bằng cách cưỡng chế IPv4, HTTP/1.1 và vô hiệu hóa socket reuse chập chờn.
-4. **Cơ chế Retry thông minh**: Tự động thử lại tối đa 3 lần khi đường truyền quốc tế bị ngắt quãng.
+## 6. KIẾN TRÚC LƯU TRỮ ĐÁM MÂY (CLOUDINARY ADAPTER - TÙY CHỌN)
+Hệ thống hỗ trợ kiến trúc **Local-first Dual Storage** qua adapter `app/Filesystem/CloudinaryStorageAdapter.php`:
+* Mặc định dự án lưu trữ và đọc ảnh trực tiếp tại `storage/app/public/` (hoàn toàn ngoại tuyến, không cần internet).
+* Khi cần tích hợp CDN Cloudinary, cấu hình các biến trong `.env`:
+  ```env
+  FILESYSTEM_DISK=cloudinary
+  CLOUDINARY_CLOUD_NAME=your_cloud_name
+  CLOUDINARY_KEY=your_cloudinary_key
+  CLOUDINARY_SECRET=your_cloudinary_secret
+  ```
+* Lệnh đồng bộ hình ảnh lên Cloudinary:
+  ```bash
+  php artisan cloudinary:sync-local-images
+  ```
 
 ---
 
-## 7. QUY TRÌNH ĐỒNG BỘ DỮ LIỆU KHI CÓ CẬP NHẬT MỚI (DÀNH CHO NHÓM)
-
-### Dành cho người thêm dữ liệu (Thêm sản phẩm, đổi banner, sửa logo qua Admin):
-1. Vào HeidiSQL, xuất đè database mới ra tệp `mockdata/database_final.sql` (bỏ chọn Drop/Create Database, tích chọn Drop/Create Table, chọn Data: Insert).
-2. Commit và Push lên GitHub:
-```bash
-git add mockdata/database_final.sql storage/app/public/
-git commit -m "feat: cap nhat san pham va hinh anh moi"
-git push origin main
-```
-
-### Dành cho các thành viên còn lại (Cập nhật dữ liệu mới về máy):
-1. Kéo mã nguồn mới:
-```bash
-git pull origin main
-```
-2. Mở HeidiSQL nạp lại tệp `mockdata/database_final.sql` vào `bagisto_db` (nhấn **F9**).
-3. Chạy lại file `setup.bat` để script tự động copy hình ảnh mới vào `public/storage`.
-4. (Tùy chọn) Chạy `php artisan cloudinary:sync-local-images` để đồng bộ ảnh lên Cloudinary nếu dùng cấu hình Cloud.
+## 7. QUY TRÌNH PHỐI HỢP NHÓM & ĐỒNG BỘ DỮ LIỆU
+1. **Khi có cập nhật dữ liệu mới (Sản phẩm/Hình ảnh):**
+   - Xuất dữ liệu mới ra `mockdata/database_final.sql`.
+   - Commit và Push lên GitHub:
+     ```bash
+     git add mockdata/database_final.sql storage/app/public/
+     git commit -m "feat: cap nhat du lieu mau va hinh anh"
+     git push origin main
+     ```
+2. **Khi thành viên khác cập nhật:**
+   ```bash
+   git pull origin main
+   ```
+   - Nạp lại `mockdata/database_final.sql` vào `bagisto_perfume`.
+   - Chạy lại `.\setup.bat` để cập nhật ảnh sang `public/storage`.
 
 ---
 
 ## 8. XỬ LÝ SỰ CỐ THƯỜNG GẶP (TROUBLESHOOTING)
-
-* **Lỗi `cURL error 35: Recv failure: Connection was reset` hoặc `cURL error 28: Timeout`:**
-  * **Nguyên nhân:** Do mạng gia đình tại VN kết nối tới máy chủ Cloudinary (Mỹ) bị chập chờn.
-  * **Khắc phục:** Hệ thống đã được tích hợp cơ chế Dual-Storage an toàn. File luôn được lưu tại local ổ cứng trước nên trang Admin vẫn lưu thành công. Bạn có thể chạy lại `php artisan cloudinary:sync-local-images` bất cứ lúc nào mạng ổn định hơn.
-
-* **Lỗi ảnh banner bị trắng / chỉ hiện chữ n1:**
-  * **Nguyên nhân:** Do chưa bật PHP Extension `gd` hoặc chưa đồng bộ thư mục ảnh sang `public/storage`.
-  * **Khắc phục:** Bật extension `gd` trong Laragon. Mở thư mục dự án, chạy lại file `setup.bat` và nhấn tổ hợp phím **Ctrl + F5** trên trình duyệt.
-
-* **Lỗi `composer: The term 'composer' is not recognized`:**
-  * **Nguyên nhân:** Mở nhầm PowerShell mặc định của Windows chưa nạp biến môi trường.
-  * **Khắc phục:** Bấm trực tiếp nút **Terminal** trên giao diện Laragon để mở cửa sổ lệnh chuẩn.
-
+* **Lỗi ảnh sản phẩm / banner không hiển thị:**
+  - Bật extension `gd` trong cấu hình PHP Laragon.
+  - Chạy lại `setup.bat` để sao chép ảnh vào `public/storage/`.
 * **Lỗi `ViteManifestNotFoundException`:**
-  * **Nguyên nhân:** Thiếu file cấu hình theme biên dịch sẵn hoặc CSDL chưa kết nối khiến web nhảy sang route `/install`.
-  * **Khắc phục:** Đảm bảo đã import CSDL `mockdata/database_final.sql` và thông tin `DB_DATABASE` trong `.env` đã trùng khớp, sau đó chạy `php artisan optimize:clear`.
+  - Đảm bảo đã import CSDL `mockdata/database_final.sql` và thông tin `DB_DATABASE` trong `.env` đã trùng khớp (`bagisto_perfume`), sau đó chạy `php artisan optimize:clear`.
+* **Lỗi không nhận diện lệnh `composer` hoặc `php`:**
+  - Khởi động cửa sổ lệnh bằng nút **Terminal** trên giao diện Laragon để nạp đầy đủ biến môi trường.
