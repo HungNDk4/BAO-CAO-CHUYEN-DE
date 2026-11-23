@@ -31,10 +31,10 @@
 1. **Phiên vừa rồi làm xong gì:**
    - Chốt danh sách **24 sản phẩm nước hoa tiêu biểu và hoàn chỉnh nhất**, phân bổ cân đối 4 danh mục (6 Nam, 6 Nữ, 6 Unisex, 6 Chiết & Mini).
    - Vô hiệu hóa (`status = 0`, `visible_individually = 0`) toàn bộ sản phẩm dư thừa và các danh mục đồ công nghệ cũ; tái lập chỉ mục xác nhận đúng **24 sản phẩm hoạt động trên Storefront**.
-   - Cập nhật nội dung mô tả dài HTML 4 phần chuyên nghiệp (Câu chuyện mùi hương, Kim tự tháp 3 tầng hương thật, Thông số kỹ thuật/hoàn cảnh sử dụng, Hướng dẫn & Cam kết) và gán đủ 3 thuộc tính lọc EAV (`capacity`, `fragrance_family`, `concentration`).
+   - Cập nhật nội dung mô tả dài HTML 4 phần chuyên nghiệp và gán đủ 3 thuộc tính lọc EAV (`capacity`, `fragrance_family`, `concentration`).
    - Đảm bảo 2 sản phẩm đặc thù: `PERFUME-0103` (`qty = 1`) và `PERFUME-0153` (`qty = 5`, `Weight = 1.0000`).
    - Tái cấu trúc thư mục `picturetemplate/` gồm đúng **24 thư mục con** dạng `<SKU>__<slug-ten-san-pham>` kèm file `info.txt` và `_branding/README.txt` hướng dẫn kích thước banner/logo.
-   - Xuất bảng tra cứu từ khóa tải ảnh nhanh chóng cho thành viên dự án.
+   - Biên soạn quy chuẩn thông số ảnh (tỉ lệ 1:1, dung lượng 150-800KB, 2-3 ảnh/sản phẩm) và **đã commit + push toàn bộ khung thư mục lên GitHub** nhánh `feature/vietnamese-localization` để Phát chỉ cần pull về là thả ảnh được ngay.
 
 2. **Trạng thái Kỹ thuật & CSDL hiện tại:**
    - **Nhánh Git hiện tại:** `feature/vietnamese-localization` (đang có commit mới, working tree sạch).
