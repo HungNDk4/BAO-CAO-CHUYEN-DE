@@ -75,3 +75,6 @@ mockdata/*.zip
 
 # 6. KHÔNG commit symlink public/storage để tránh lỗi text rác trên Windows
 public/storage
+
+# 7. Thư mục chứa ảnh mẫu tạm để nạp ảnh sản phẩm
+picturetemplate/

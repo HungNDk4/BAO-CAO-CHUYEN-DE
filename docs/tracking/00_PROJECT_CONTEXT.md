@@ -1,4 +1,4 @@
-# 00_PROJECT_CONTEXT.md — Bối Cảnh Dự Án & Quy Tắc Kỹ Thuật Bất Di Bất Dịch
+# 00_PROJECT_CONTEXT.md — Bối Cảnh Dự Án, Quy Tắc & Cơ Chế Vận Hành
 
 > **Tài liệu tham chiếu tối cao cho mọi AI Agent và thành viên phát triển.**  
 > Bất kỳ AI Agent nào khi bắt đầu phiên làm việc mới **BẮT BUỘC** phải đọc và tuân thủ toàn bộ nguyên tắc trong tài liệu này trước khi thực thi bất kỳ thao tác nào.
@@ -37,16 +37,17 @@
 - Xây dựng file thực thi tự động `setup.bat`: Tự sinh `.env`, đồng bộ tài nguyên hình ảnh từ `storage/app/public/` sang `public/storage/` (khắc phục triệt để lỗi symlink trên Windows), tự làm sạch cache chỉ với 1 click.
 
 ### Trụ cột 2: Thực Nghiệm Hiệu Năng Truy Vấn CSDL với `EXPLAIN ANALYZE`
-- Xây dựng bài đo lường thực nghiệm khoa học, đối chứng hiệu năng tìm kiếm tiếng Việt trên tập dữ liệu sản phẩm:
+- Xây dựng bài đo lường thực nghiệm khoa học trên bảng benchmark riêng biệt `exp_product_search_bench`, đối chứng hiệu năng tìm kiếm tiếng Việt trên tập dữ liệu sản phẩm:
   $$\text{Query LIKE \%...\%} \quad \text{vs} \quad \text{B-Tree Index} \quad \text{vs} \quad \text{FULLTEXT Index (ngram)}$$
+- Khảo sát các trường hợp: tiếng Việt có dấu, không dấu, từ ngắn 2–3 ký tự.
 - Sử dụng công cụ `EXPLAIN ANALYZE` của MySQL 8.4 để phân tích chi phí truy vấn (Query Cost), số lượng dòng duyệt qua (Rows Examined) và thời gian thực thi thực tế (Execution Time tính bằng mili-giây).
 
 ### Trụ cột 3: Mô Phỏng Giao Dịch Đồng Thời (Concurrency) & Khóa Bi Quan (`SELECT ... FOR UPDATE`)
 - Thiết lập kịch bản tranh chấp tài nguyên tồn kho (Race Condition / Overselling) khi nhiều tiến trình/người dùng cùng đặt mua sản phẩm có số lượng tồn kho giới hạn (`qty = 1` và `qty = 5`).
-- Xây dựng thực nghiệm đối chứng:
-  - *Trường hợp 1:* Không sử dụng cơ chế khóa $\rightarrow$ dẫn đến sai lệch dữ liệu tồn kho (âm kho).
-  - *Trường hợp 2:* Áp dụng khóa bi quan (`SELECT ... FOR UPDATE` trong Database Transaction của Laravel) $\rightarrow$ dữ liệu toàn vẹn tuyệt đối.
-- Thiết lập quy trình sao lưu và phục hồi CSDL tự động bằng `mysqldump`, xác thực tính toàn vẹn dữ liệu trước và sau sao lưu bằng `CHECKSUM TABLE`.
+- Xây dựng thực nghiệm đối chứng trên bản sao bảng tồn kho (`exp_product_inventories`), ghi chú rõ đây là mô phỏng tầng CSDL:
+  - *Trường hợp 1 (Không khóa):* Dẫn đến sai lệch dữ liệu tồn kho (âm kho).
+  - *Trường hợp 2 (Khóa bi quan):* Áp dụng `SELECT ... FOR UPDATE` trong Database Transaction của Laravel $\rightarrow$ dữ liệu toàn vẹn tuyệt đối.
+- Thiết lập quy trình sao lưu và phục hồi CSDL tự động bằng `mysqldump` (kèm cờ `--single-transaction --routines --triggers --events`), xác thực tính toàn vẹn dữ liệu trước và sau sao lưu bằng `COUNT(*)` và `CHECKSUM TABLE`.
 
 ### Trụ cột 4: Kiểm Thử Hộp Đen Chuẩn ISTQB & Đánh Giá Chất Lượng ISO/IEC 25010
 - Áp dụng các kỹ thuật thiết kế ca kiểm thử hộp đen tiêu chuẩn quốc tế: Phân vùng tương đương (Equivalence Partitioning - EP) và Phân tích giá trị biên (Boundary Value Analysis - BVA).
@@ -67,3 +68,19 @@
    Kiểm soát chặt chẽ file `.env` và `.gitignore`, tuyệt đối không commit các mã khóa API (như Cloudinary API keys, Database credentials thực tế) lên GitHub.
 5. **Minh bạch bản quyền và học thuật:**  
    Tất cả hình ảnh sản phẩm do AI tạo hoặc dữ liệu sản phẩm thử nghiệm chỉ được sử dụng với mục đích minh họa học thuật phi thương mại, trên nền tảng mã nguồn mở giấy phép MIT của Bagisto.
+
+---
+
+## 5. Quy Tắc Cập Nhật Bắt Buộc Sau Mỗi Lượt Chạy (Mandatory Turn Protocol)
+
+Sau khi hoàn thành bất kỳ tác vụ nào trong quá trình thực thi, Agent **BẮT BUỘC** thực hiện đồng bộ 4 bước sau:
+1. Cập nhật tiến độ vào [01_ROADMAP_AND_TODO.md](file:///d:/CD12/bagisto-store/docs/tracking/01_ROADMAP_AND_TODO.md) (chuyển trạng thái `[ ]` sang `[x]`).
+2. Ghi nhận nhật ký kỹ thuật, bài học hoặc lỗi thật mới (nếu có) vào [02_TECHNICAL_NOTES_AND_BUGS.md](file:///d:/CD12/bagisto-store/docs/tracking/02_TECHNICAL_NOTES_AND_BUGS.md).
+3. Cập nhật phiếu bàn giao phiên làm việc tại [03_SESSION_HANDOFF.md](file:///d:/CD12/bagisto-store/docs/tracking/03_SESSION_HANDOFF.md).
+4. In ra **Báo Cáo Tiến Độ 4 Dòng** ở cuối câu trả lời theo đúng định dạng:
+   ```text
+   - [Giai đoạn] <Tên giai đoạn & Tác vụ vừa hoàn thành>
+   - [Trạng thái kỹ thuật] <Nhánh Git / Trạng thái DB / Localhost Server>
+   - [Số liệu kiểm chứng] <Bằng chứng số liệu thật, lệnh CLI / kết quả kiểm thử>
+   - [Kế hoạch kế tiếp] <Hành động cụ thể cần làm ngay trong bước tiếp theo>
+   ```
