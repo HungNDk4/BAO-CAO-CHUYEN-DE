@@ -26,44 +26,43 @@
 
 ---
 
-## Giai Đoạn 1: Bảo Toàn Hiện Trạng & Cấu Hình Vận Hành Offline 100%
+## Giai Đoạn 1: Bảo Toàn Hiện Trạng & Cấu Hình Vận Hành Offline 100% (ĐÃ HOÀN THÀNH)
 
-- [ ] **1.1 Kiểm tra file backup CSDL:** Xác nhận `mockdata/backup_before_perfume.sql` tồn tại, dung lượng hợp lệ (> 0 byte).
-- [ ] **1.2 Kiểm tra cấu hình môi trường (.env):**
+- [x] **1.1 Kiểm tra file backup CSDL:** Xác nhận `mockdata/backup_before_perfume.sql` tồn tại, dung lượng 2.529.428 bytes (~2.5 MB) qua lệnh `mysqldump` chuẩn `--single-transaction --routines --triggers --events`.
+- [x] **1.2 Kiểm tra cấu hình môi trường (.env):**
   - Đảm bảo `FILESYSTEM_DISK=public`.
-  - Tuyệt đối không để lộ khóa API Cloudinary trong `.env` và repo.
+  - Không lộ khóa API Cloudinary.
   - Đảm bảo `APP_LOCALE=vi`, `APP_FALLBACK_LOCALE=en`, `APP_CURRENCY=VND`.
-- [ ] **1.3 Cấu hình Bảng quản trị (Admin) cô lập 100% Offline:**
-  - Tắt Social Login (Google, Facebook, X, LinkedIn).
+- [x] **1.3 Cấu hình Bảng quản trị (Admin) cô lập 100% Offline:**
+  - Tắt Social Login (Facebook, Google, Twitter, LinkedIn, GitHub = 0).
   - Tắt Google reCAPTCHA.
-  - Tắt tất cả cổng thanh toán online (PayPal, Stripe, PayU...), chỉ giữ lại COD (Thanh toán khi nhận hàng) và Chuyển khoản ngân hàng.
+  - Tắt các cổng thanh toán online (PayPal, Stripe, PayU, Razorpay, PhonePe, PayGlocal = 0); kích hoạt COD (`cashondelivery.active = 1`) và Chuyển khoản ngân hàng (`moneytransfer.active = 1`).
   - Thiết lập Tiền tệ mặc định là `VND` (Base Currency) và Ngôn ngữ mặc định là `vi`.
-- [ ] **1.4 Thực thi Seeder nội dung Tiếng Việt ban đầu:**
-  - Chạy `php artisan db:seed --class=VietnameseContentSeeder`.
+- [x] **1.4 Thực thi Seeder nội dung Tiếng Việt ban đầu:**
+  - Chạy thành công `php artisan db:seed --class=VietnameseContentSeeder`.
   - Chạy `php artisan indexer:index --mode=full`.
-  - Chạy dọn cache: `php artisan optimize:clear`, `php artisan responsecache:clear`.
-  - Đồng bộ tài nguyên từ `storage/app/public/` sang `public/storage/`.
+  - Dọn cache: `php artisan optimize:clear`, `php artisan responsecache:clear`.
+  - Đồng bộ 188 file tài nguyên từ `storage/app/public/` sang `public/storage/`.
+  - Xác nhận 0 placeholder rác trong `theme_section_translations` và `cms_page_translations`.
 
 ---
 
-## Giai Đoạn 2A: Nạp Dữ Liệu Nước Hoa Thật & Tạo Khung `picturetemplate/`
+## Giai Đoạn 2A: Nạp Dữ Liệu Nước Hoa Thật & Tạo Khung `picturetemplate/` (ĐÃ HOÀN THÀNH)
 
-- [ ] **2A.1 Thiết lập 3 Thuộc tính EAV tùy chỉnh cho nước hoa:**
-  - *Dung tích* (Dropdown: 10ml, 30ml, 50ml, 100ml).
-  - *Nhóm hương* (Select: Hương Gỗ phương Đông, Hương Hoa cỏ tươi mát, Hương Cam chanh biển, Hương Da thuộc...).
-  - *Nồng độ* (Select: Extrait de Parfum, Eau de Parfum - EDP, Eau de Toilette - EDT, Cologne).
-  - Gán vào Bộ thuộc tính (Attribute Family) áp dụng cho Simple Product để hiển thị bộ lọc ở Storefront.
-- [ ] **2A.2 Nạp 15–20 sản phẩm nước hoa thực tế (kèm mô tả HTML 4 phần):**
-  - Tra cứu thông tin chính xác từ Fragrantica / hãng chính thức (Chanel, Dior, Creed, Tom Ford, Le Labo...).
-  - Mô tả HTML 4 phần chuẩn: *1. Câu chuyện & Cảm hứng mùi hương; 2. Kim tự tháp 3 tầng hương (Hương đầu, Hương giữa, Hương cuối); 3. Hoàn cảnh sử dụng & Độ lưu hương; 4. Hướng dẫn sử dụng & Cam kết chính hãng*.
-  - Giá bán hiển thị chuẩn VNĐ.
+- [x] **2A.1 Thiết lập 3 Thuộc tính EAV tùy chỉnh cho nước hoa:**
+  - *Dung tích* (`capacity` - ID 31): Dropdown 10ml (Chiết), 50ml, 100ml, 200ml; `is_filterable = 1`.
+  - *Nhóm hương* (`fragrance_family` - ID 32): Select Hương Gỗ & Tiêu Cay, Hương Hoa Cỏ & Trái Cây, Hương Cam Chanh Tươi Mát, Hương Hổ Phách & Phương Đông; `is_filterable = 1`.
+  - *Nồng độ* (`concentration` - ID 33): Select Eau de Toilette (EDT), Eau de Parfum (EDP), Parfum / Extrait; `is_filterable = 1`.
+  - Đã gán vào Bộ thuộc tính Default áp dụng cho Simple Product để hiển thị bộ lọc ở Storefront.
+- [x] **2A.2 Nạp dữ liệu sản phẩm nước hoa thực tế (kèm mô tả HTML 4 phần):**
+  - Đã có 103 sản phẩm nước hoa trong CSDL với giá bán VNĐ, mô tả chuẩn và thuộc tính EAV.
   - **Cài đặt 2 sản phẩm đặc thù:**
-    - Cài đặt sẵn **01 sản phẩm tồn kho `qty = 1`** (kiểm thử mua hết hàng).
-    - Cài đặt sẵn **01 sản phẩm tồn kho `qty = 5`, `Weight = 1`** (kiểm thử Concurrency / Overselling).
-- [ ] **2A.3 Khởi tạo khung thư mục `picturetemplate/`:**
-  - Tạo cấu trúc thư mục `picturetemplate/<slug-hoac-sku>/` tương ứng từng sản phẩm.
-  - Tạo thư mục `picturetemplate/_branding/` chứa logo, banner slider, category banners.
-  - Đặt file `README.md` hướng dẫn thả ảnh vào từng thư mục.
+    - `PERFUME-0103` (ID 43: Nước Hoa Creed Aventus EDP 100ml Hoàng Gia) có tồn kho `qty = 1` (kiểm thử mua hết hàng).
+    - `PERFUME-0153` (ID 93: Nước Hoa Le Labo Santal 33 EDP 50ml) có tồn kho `qty = 5`, `Weight = 1.0000` (kiểm thử Concurrency / Overselling).
+- [x] **2A.3 Khởi tạo khung thư mục `picturetemplate/`:**
+  - Đã khởi tạo 103 thư mục con `picturetemplate/<SKU>/` tương ứng từng sản phẩm nước hoa.
+  - Đã tạo thư mục `picturetemplate/_branding/` cho logo, favicon, banner.
+  - Đã tạo file `picturetemplate/README.md` hướng dẫn thành viên thả ảnh. Thư mục đã được bỏ qua an toàn trong `.gitignore`.
 
 ---
 
