@@ -29,13 +29,12 @@
 ### [BÀN GIAO PHIÊN LÀM VIỆC — NGÀY 23/11/2026]
 
 1. **Phiên vừa rồi làm xong gì:**
-   - Hoàn thành xuất bản sao lưu CSDL an toàn `mockdata/backup_before_perfume.sql` (2.529.428 bytes, ~2.5 MB) bằng `mysqldump` chuẩn `--single-transaction --routines --triggers --events`.
-   - Kiểm tra và cô lập 100% môi trường Offline trong Admin: Social Login = 0, reCAPTCHA = 0, online payment gateways = 0, kích hoạt COD và Chuyển khoản ngân hàng (`moneytransfer = 1`).
-   - Chạy thành công `php artisan db:seed --class=VietnameseContentSeeder`, `indexer:index --mode=full`, `optimize:clear` và đồng bộ 188 file ảnh từ `storage/app/public/` sang `public/storage/`. Xác nhận 0 placeholder rác trong DB.
-   - Kiểm chứng 3 thuộc tính EAV nước hoa (`capacity`, `fragrance_family`, `concentration`) đã có sẵn tùy chọn song ngữ Việt-Anh, `is_filterable = 1`, thuộc nhóm General của Default Family.
-   - Cấu hình chuẩn 2 sản phẩm kiểm thử đặc thù: `PERFUME-0103` (`qty = 1`) và `PERFUME-0153` (`qty = 5`, `Weight = 1.0000`).
-   - Tự động tạo khung 103 thư mục con `picturetemplate/<SKU>/` cùng `_branding/` và `README.md` để Phát và Hùng thả ảnh thật. Thư mục đã được bỏ qua trong `.gitignore`.
-   - Cập nhật tiến độ `[x]` cho toàn bộ Giai đoạn 1 và Giai đoạn 2A trong `01_ROADMAP_AND_TODO.md`.
+   - Chốt danh sách **24 sản phẩm nước hoa tiêu biểu và hoàn chỉnh nhất**, phân bổ cân đối 4 danh mục (6 Nam, 6 Nữ, 6 Unisex, 6 Chiết & Mini).
+   - Vô hiệu hóa (`status = 0`, `visible_individually = 0`) toàn bộ sản phẩm dư thừa và các danh mục đồ công nghệ cũ; tái lập chỉ mục xác nhận đúng **24 sản phẩm hoạt động trên Storefront**.
+   - Cập nhật nội dung mô tả dài HTML 4 phần chuyên nghiệp (Câu chuyện mùi hương, Kim tự tháp 3 tầng hương thật, Thông số kỹ thuật/hoàn cảnh sử dụng, Hướng dẫn & Cam kết) và gán đủ 3 thuộc tính lọc EAV (`capacity`, `fragrance_family`, `concentration`).
+   - Đảm bảo 2 sản phẩm đặc thù: `PERFUME-0103` (`qty = 1`) và `PERFUME-0153` (`qty = 5`, `Weight = 1.0000`).
+   - Tái cấu trúc thư mục `picturetemplate/` gồm đúng **24 thư mục con** dạng `<SKU>__<slug-ten-san-pham>` kèm file `info.txt` và `_branding/README.txt` hướng dẫn kích thước banner/logo.
+   - Xuất bảng tra cứu từ khóa tải ảnh nhanh chóng cho thành viên dự án.
 
 2. **Trạng thái Kỹ thuật & CSDL hiện tại:**
    - **Nhánh Git hiện tại:** `feature/vietnamese-localization` (đang có commit mới, working tree sạch).

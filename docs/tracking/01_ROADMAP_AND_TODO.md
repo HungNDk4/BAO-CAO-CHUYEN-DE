@@ -54,15 +54,17 @@
   - *Nhóm hương* (`fragrance_family` - ID 32): Select Hương Gỗ & Tiêu Cay, Hương Hoa Cỏ & Trái Cây, Hương Cam Chanh Tươi Mát, Hương Hổ Phách & Phương Đông; `is_filterable = 1`.
   - *Nồng độ* (`concentration` - ID 33): Select Eau de Toilette (EDT), Eau de Parfum (EDP), Parfum / Extrait; `is_filterable = 1`.
   - Đã gán vào Bộ thuộc tính Default áp dụng cho Simple Product để hiển thị bộ lọc ở Storefront.
-- [x] **2A.2 Nạp dữ liệu sản phẩm nước hoa thực tế (kèm mô tả HTML 4 phần):**
-  - Đã có 103 sản phẩm nước hoa trong CSDL với giá bán VNĐ, mô tả chuẩn và thuộc tính EAV.
+- [x] **2A.2 Chốt danh sách 24 sản phẩm nước hoa tiêu biểu & Nạp mô tả HTML 4 phần:**
+  - Đã rà soát và cô lập chuẩn xác bộ **24 sản phẩm nước hoa tiêu biểu nhất** (phủ đều 4 danh mục: 6 Nam, 6 Nữ, 6 Unisex, 6 Chiết & Mini).
+  - Vô hiệu hóa (`status = 0`, `visible_individually = 0`) toàn bộ sản phẩm dư thừa và danh mục đồ công nghệ cũ để Storefront chỉ hiển thị 100% 24 chai nước hoa này.
+  - Cập nhật nội dung mô tả dài HTML 4 phần chuyên nghiệp (1. Câu chuyện & Cảm hứng mùi hương; 2. Kim tự tháp 3 tầng hương chuẩn hãng; 3. Thông số kỹ thuật & Hoàn cảnh sử dụng; 4. Hướng dẫn sử dụng & Cam kết chính hãng).
   - **Cài đặt 2 sản phẩm đặc thù:**
     - `PERFUME-0103` (ID 43: Nước Hoa Creed Aventus EDP 100ml Hoàng Gia) có tồn kho `qty = 1` (kiểm thử mua hết hàng).
     - `PERFUME-0153` (ID 93: Nước Hoa Le Labo Santal 33 EDP 50ml) có tồn kho `qty = 5`, `Weight = 1.0000` (kiểm thử Concurrency / Overselling).
-- [x] **2A.3 Khởi tạo khung thư mục `picturetemplate/`:**
-  - Đã khởi tạo 103 thư mục con `picturetemplate/<SKU>/` tương ứng từng sản phẩm nước hoa.
-  - Đã tạo thư mục `picturetemplate/_branding/` cho logo, favicon, banner.
-  - Đã tạo file `picturetemplate/README.md` hướng dẫn thành viên thả ảnh. Thư mục đã được bỏ qua an toàn trong `.gitignore`.
+- [x] **2A.3 Tái cấu trúc thư mục `picturetemplate/` theo cấu trúc `<SKU>__<slug>`:**
+  - Đã tái cấu trúc đúng **24 thư mục con** đặt tên dễ nhìn: `<SKU>__<slug-ten-san-pham>` (ví dụ: `PERFUME-0103__creed-aventus-edp-100ml`, `PERFUME-0153__le-labo-santal-33-edp-50ml`...), mỗi thư mục đều có file `info.txt` hướng dẫn.
+  - Thư mục `picturetemplate/_branding/` có file `README.txt` hướng dẫn kích thước ảnh logo và 3 banner slider (`banner-1.jpg`, `banner-2.jpg`, `banner-3.jpg`).
+  - Đã cập nhật file `picturetemplate/README.md`. Thư mục được bảo vệ trong `.gitignore`.
 
 ---
 
