@@ -51,6 +51,17 @@
 
 ---
 
+### Sự cố 4: Rủi ro phụ thuộc Server bên thứ ba (Cloudinary / CDN) khi Demo Offline
+- **Hiện tượng & Bối cảnh:** Khi tắt kết nối Wifi hoặc phòng bảo vệ không có mạng Internet, nếu hệ thống trỏ ảnh sang dịch vụ lưu trữ bên thứ ba (Cloudinary, AWS S3, Imgur) thì toàn bộ hình ảnh sản phẩm và banner không tải được (bị lỗi vỡ ảnh / broken image).
+- **Nguyên nhân gốc (Điểm nghẽn SPOF - Single Point of Failure):**  
+  Ứng dụng phụ thuộc vào kết nối mạng ngoài và máy chủ bên thứ ba. Nếu nhà cung cấp dịch vụ bảo trì, vượt hạn mức miễn phí (Bandwidth quota exceeded), hoặc mạng phòng thi chập chờn, website sẽ mất toàn bộ hình ảnh.
+- **Giải pháp kiến trúc chuẩn (Self-hosted Local Storage):**  
+  - Thiết lập `FILESYSTEM_DISK=public` trong `.env`.
+  - Toàn bộ 100% hình ảnh sản phẩm, banner, icon được lưu trữ cục bộ trực tiếp trên ổ đĩa máy chủ (`storage/app/public/` và đồng bộ sang `public/storage/`).
+  - Hệ thống tự chủ dữ liệu 100% Offline: khi ngắt hoàn toàn Wifi/Internet trên máy tính, website vẫn tải đầy đủ hình ảnh, giá bán và xử lý trơn tru mọi nghiệp vụ giao dịch.
+
+---
+
 ### Sự cố 4: Cảnh báo tĩnh `Undefined property: Channel::$id` trong file footer
 - **Hiện tượng:** PHP Language Server (Intelephense) trong VS Code / IDE báo lỗi tĩnh `Undefined property: Channel::$id` và `Channel::$theme` tại file view [footer/index.blade.php](file:///d:/CD12/bagisto-store/packages/Webkul/Shop/src/Resources/views/components/layouts/footer/index.blade.php).
 - **Nguyên nhân gốc:**  
