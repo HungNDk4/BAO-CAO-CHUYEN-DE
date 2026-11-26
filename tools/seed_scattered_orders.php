@@ -12,16 +12,16 @@
  *   php tools/seed_scattered_orders.php 30 today --clean
  */
 
-require __DIR__.'/../vendor/autoload.php';
-$app = require_once __DIR__.'/../bootstrap/app.php';
-$kernel = $app->make(Kernel::class);
-$kernel->bootstrap();
-
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+
+require __DIR__.'/../vendor/autoload.php';
+$app = require_once __DIR__.'/../bootstrap/app.php';
+$kernel = $app->make(Kernel::class);
+$kernel->bootstrap();
 
 echo '======================================================================'.PHP_EOL;
 echo '  BAGISTO 2.4 - PERFUME STORE: ORDER SCATTERING SEEDER               '.PHP_EOL;
