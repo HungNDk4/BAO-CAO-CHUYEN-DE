@@ -44,13 +44,11 @@ class EnglishPerfumeContentSeeder extends Seeder
             throw new \RuntimeException("Category lookup failed for slug: 'womens-perfumes' in locale 'en'. Seeder aborted.");
         }
 
-        // Section 2: Offer Info
         $this->updateSectionOptions(2, function (array $opts) {
             $opts['html'] = '<div class="home-offer"><h1>SPECIAL OFFER - WORLD OF AUTHENTIC &amp; LUXURY PERFUMES</h1></div>';
             return $opts;
         });
 
-        // Section 12: Services
         $this->updateSectionOptions(12, function (array $opts) {
             if (isset($opts['services'][0])) {
                 $opts['services'][0]['title'] = 'Nationwide Express Shipping';
@@ -67,24 +65,21 @@ class EnglishPerfumeContentSeeder extends Seeder
             return $opts;
         });
 
-        // Section 22: Showroom Showcase
         $this->updateSectionOptions(22, function (array $opts) {
             $opts['html'] = str_replace(
                 ['ShopSiuu Showroom', "Don't just trust the hype,<br />feel the gear yourself", 'Over 200 gaming gear models ready for hands-on trial and side-by-side comparison on-site. Friendly, zero-pressure advice.'],
-                ['Authentic Perfume Showroom', "Don't just trust the hype,<br />experience the fragrance yourself", 'Hundreds of perfume samples ready for trial on skin. Friendly, professional advice with zero pressure.'],
+                ['Maison P&amp;H Fragrance Atelier', 'Discover a fragrance,<br />make it your signature', 'Explore a curated selection of authentic perfumes and find a scent that feels like you. Our fragrance specialists are here to help.'],
                 $opts['html'] ?? ''
             );
             return $opts;
         });
 
-        // Section 23: Men's Perfumes
         $this->updateSectionOptions(23, function (array $opts) use ($menCatId) {
             $opts['title'] = "Men's Luxury Perfumes";
             $opts['filters']['category_id'] = (string) $menCatId;
             return $opts;
         });
 
-        // Section 25: Women's Perfumes
         $this->updateSectionOptions(25, function (array $opts) use ($womenCatId) {
             $opts['title'] = "Women's Elegant Perfumes";
             $opts['filters']['category_id'] = (string) $womenCatId;
