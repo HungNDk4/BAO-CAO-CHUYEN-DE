@@ -1,0 +1,40 @@
+=== BENCHMARK B: CONCURRENCY & PESSIMISTIC LOCKING (exp_product_inventories) ===
+Date: 2026-11-27 08:15:56
+
+--- Scenario 1: qty=1, 2 buyers (nolock, initial qty=1, concurrent workers=2) ---
+Worker #1 [NO_LOCK]   -> SUCCESS (saw qty=1, after update qty=0, 69.8ms)
+Worker #2 [NO_LOCK]   -> SUCCESS (saw qty=1, after update qty=-1, 79.7ms)
+FINAL DB QTY: -1 | Success: 2 | Rejected: 0
+
+--- Scenario 1: qty=1, 2 buyers (forupdate, initial qty=1, concurrent workers=2) ---
+Worker #1 [FOR_UPDATE] -> SUCCESS (locked qty=1, after qty=0, 75.1ms)
+Worker #2 [FOR_UPDATE] -> BLOCKED_OUT_OF_STOCK (locked qty=0, 68.1ms)
+FINAL DB QTY: 0 | Success: 1 | Rejected: 1
+
+--- Scenario 2: qty=5, 8 buyers (nolock, initial qty=5, concurrent workers=8) ---
+Worker #1 [NO_LOCK]   -> SUCCESS (saw qty=5, after update qty=4, 65.1ms)
+Worker #2 [NO_LOCK]   -> SUCCESS (saw qty=4, after update qty=1, 74.9ms)
+Worker #3 [NO_LOCK]   -> SUCCESS (saw qty=5, after update qty=3, 68.6ms)
+Worker #4 [NO_LOCK]   -> SUCCESS (saw qty=4, after update qty=2, 64.2ms)
+Worker #5 [NO_LOCK]   -> SUCCESS (saw qty=2, after update qty=-1, 75ms)
+Worker #6 [NO_LOCK]   -> SUCCESS (saw qty=3, after update qty=0, 63.7ms)
+Worker #7 [NO_LOCK]   -> SUCCESS (saw qty=1, after update qty=-2, 66.5ms)
+Worker #8 [NO_LOCK]   -> SUCCESS (saw qty=1, after update qty=-3, 67.9ms)
+FINAL DB QTY: -3 | Success: 8 | Rejected: 0
+
+--- Scenario 2: qty=5, 8 buyers (forupdate, initial qty=5, concurrent workers=8) ---
+Worker #1 [FOR_UPDATE] -> SUCCESS (locked qty=3, after qty=2, 175.3ms)
+Worker #2 [FOR_UPDATE] -> SUCCESS (locked qty=5, after qty=4, 79.2ms)
+Worker #3 [FOR_UPDATE] -> SUCCESS (locked qty=4, after qty=3, 105.4ms)
+Worker #4 [FOR_UPDATE] -> SUCCESS (locked qty=2, after qty=1, 150.6ms)
+Worker #5 [FOR_UPDATE] -> BLOCKED_OUT_OF_STOCK (locked qty=0, 187.5ms)
+Worker #6 [FOR_UPDATE] -> SUCCESS (locked qty=1, after qty=0, 222.4ms)
+Worker #7 [FOR_UPDATE] -> BLOCKED_OUT_OF_STOCK (locked qty=0, 182.1ms)
+Worker #8 [FOR_UPDATE] -> BLOCKED_OUT_OF_STOCK (locked qty=0, 175.1ms)
+FINAL DB QTY: 0 | Success: 5 | Rejected: 3
+
+=== SUMMARY TABLE ===
+Scenario 1: qty=1, 2 buyers  | nolock    | Init=1 | Workers=2 | OK=2 | Reject=0 | FinalQty=-1
+Scenario 1: qty=1, 2 buyers  | forupdate | Init=1 | Workers=2 | OK=1 | Reject=1 | FinalQty=0
+Scenario 2: qty=5, 8 buyers  | nolock    | Init=5 | Workers=8 | OK=8 | Reject=0 | FinalQty=-3
+Scenario 2: qty=5, 8 buyers  | forupdate | Init=5 | Workers=8 | OK=5 | Reject=3 | FinalQty=0

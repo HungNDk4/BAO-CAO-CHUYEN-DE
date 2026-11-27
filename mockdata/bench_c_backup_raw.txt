@@ -1,0 +1,24 @@
+=== BENCHMARK C: BACKUP, RESTORE & CHECKSUM VERIFICATION ===
+Date: 2026-11-27 08:38:02
+Source DB: bagisto_db | Target Restore DB: bagisto_restore_test
+1. mysqldump exit=0 | time=1.31s | size=1549256 bytes
+2. restore exit=0 | time=4.86s
+
+3. COUNT(*) & CHECKSUM TABLE COMPARISON:
+Table                        | SrcCnt   | DstCnt   | SrcChecksum  | DstChecksum  | Match
+--------------------------------------------------------------------------------------------
+channels                     | 1        | 1        | 41478226     | 41478226     | OK
+core_config                  | 161      | 161      | 2064555721   | 2064555721   | OK
+customers                    | 11       | 11       | 153773278    | 153773278    | OK
+orders                       | 36       | 36       | 1842139412   | 1842139412   | OK
+order_items                  | 49       | 49       | 2596167607   | 2596167607   | OK
+invoices                     | 26       | 26       | 1719472719   | 1719472719   | OK
+shipments                    | 17       | 17       | 2646773529   | 2646773529   | OK
+products                     | 143      | 143      | 2704885529   | 2704885529   | OK
+product_flat                 | 286      | 286      | 1492229222   | 1492229222   | OK
+product_images               | 176      | 176      | 1025968609   | 1025968609   | OK
+product_inventories          | 141      | 141      | 3059829948   | 3059829948   | OK
+theme_sections               | 10       | 10       | 4197029444   | 4197029444   | OK
+theme_section_translations   | 20       | 20       | 607360191    | 607360191    | OK
+
+Overall Integrity: 100% MATCHED

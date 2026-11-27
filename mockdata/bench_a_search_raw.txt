@@ -1,0 +1,131 @@
+=== BENCHMARK A: VIETNAMESE SEARCH PERFORMANCE ===
+Date: 2026-11-27 08:35:15
+MySQL Version: 8.4.3
+ngram_token_size: 2
+Table: exp_product_search_bench (isolated experiment table)
+Data generation: deterministic perfume catalog combinations (brands, lines, notes, concentrations, volumes) with 0.1% rare mid-string target and 0.2% rare prefix target.
+
+------------------------------------------------------------
+DATASET SIZE: 10000 ROWS
+------------------------------------------------------------
+Inserted 10000 rows in 0.22s
+
+[LIKE '%Tuyệt Tác%' (Full Scan)]
+Runs (ms): 4.064, 3.925, 3.809, 3.804, 3.798 | Median: 3.809 ms | Returned (LIMIT 50): 10
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=1151 rows=50) (actual time=1.53..3.95 rows=10 loops=1)
+    -> Filter: (exp_product_search_bench.`name` like '%Tuyệt Tác%')  (cost=1151 rows=1100) (actual time=1.53..3.95 rows=10 loops=1)
+        -> Covering index scan on exp_product_search_bench using idx_exp_name_btree  (cost=1151 rows=9897) (actual time=0.0187..1.51 rows=10000 loops=1)
+
+
+[LIKE 'Hương Trầm%' (B-Tree Prefix)]
+Runs (ms): 0.416, 0.367, 0.333, 0.288, 0.262 | Median: 0.333 ms | Returned (LIMIT 50): 10
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=4.09 rows=10) (actual time=0.0126..0.021 rows=10 loops=1)
+    -> Filter: (exp_product_search_bench.`name` like 'Hương Trầm%')  (cost=4.09 rows=10) (actual time=0.0124..0.0204 rows=10 loops=1)
+        -> Covering index range scan on exp_product_search_bench using idx_exp_name_btree over ('Hương Trầm																																																																																																																																																																																																																																																					' <= name <= 'Hương Trầm￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿')  (cost=4.09 rows=10) (actual time=0.0113..0.0173 rows=10 loops=1)
+
+
+[FULLTEXT ngram ('"Tuyệt Tác"' có dấu)]
+Runs (ms): 4.491, 1.065, 0.971, 1.029, 1.043 | Median: 1.043 ms | Returned (LIMIT 50): 10
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=1.1 rows=1) (actual time=0.0092..0.0297 rows=10 loops=1)
+    -> Filter: (match exp_product_search_bench.`name` against ('"Tuyệt Tác"' in boolean mode))  (cost=1.1 rows=1) (actual time=0.0088..0.0287 rows=10 loops=1)
+        -> Full-text index search on exp_product_search_bench using ft_exp_name_ngram (name='"Tuyệt Tác"')  (cost=1.1 rows=1) (actual time=0.0084..0.0275 rows=10 loops=1)
+
+
+[FULLTEXT ngram ('"Tuyet Tac"' không dấu)]
+Runs (ms): 0.716, 0.675, 0.642, 0.654, 0.642 | Median: 0.654 ms | Returned (LIMIT 50): 10
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=1.1 rows=1) (actual time=0.0088..0.0292 rows=10 loops=1)
+    -> Filter: (match exp_product_search_bench.`name` against ('"Tuyet Tac"' in boolean mode))  (cost=1.1 rows=1) (actual time=0.0085..0.0282 rows=10 loops=1)
+        -> Full-text index search on exp_product_search_bench using ft_exp_name_ngram (name='"Tuyet Tac"')  (cost=1.1 rows=1) (actual time=0.0082..0.0272 rows=10 loops=1)
+
+
+------------------------------------------------------------
+DATASET SIZE: 100000 ROWS
+------------------------------------------------------------
+Inserted 100000 rows in 1.42s
+
+[LIKE '%Tuyệt Tác%' (Full Scan)]
+Runs (ms): 27.344, 35.042, 27.412, 28.929, 15.328 | Median: 27.412 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=11388 rows=50) (actual time=15.9..15.9 rows=50 loops=1)
+    -> Filter: (exp_product_search_bench.`name` like '%Tuyệt Tác%')  (cost=11388 rows=10978) (actual time=15.9..15.9 rows=50 loops=1)
+        -> Covering index scan on exp_product_search_bench using idx_exp_name_btree  (cost=11388 rows=98811) (actual time=0.0325..6.15 rows=39950 loops=1)
+
+
+[LIKE 'Hương Trầm%' (B-Tree Prefix)]
+Runs (ms): 0.702, 0.564, 0.472, 0.43, 0.416 | Median: 0.472 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=33.4 rows=50) (actual time=0.0128..0.0452 rows=50 loops=1)
+    -> Filter: (exp_product_search_bench.`name` like 'Hương Trầm%')  (cost=33.4 rows=100) (actual time=0.0123..0.042 rows=50 loops=1)
+        -> Covering index range scan on exp_product_search_bench using idx_exp_name_btree over ('Hương Trầm																																																																																																																																																																																																																																																					' <= name <= 'Hương Trầm￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿')  (cost=33.4 rows=100) (actual time=0.0112..0.034 rows=50 loops=1)
+
+
+[FULLTEXT ngram ('"Tuyệt Tác"' có dấu)]
+Runs (ms): 27.834, 5.884, 5.585, 7.344, 6.55 | Median: 6.55 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=1.1 rows=1) (actual time=0.0587..0.408 rows=50 loops=1)
+    -> Filter: (match exp_product_search_bench.`name` against ('"Tuyệt Tác"' in boolean mode))  (cost=1.1 rows=1) (actual time=0.0577..0.405 rows=50 loops=1)
+        -> Full-text index search on exp_product_search_bench using ft_exp_name_ngram (name='"Tuyệt Tác"')  (cost=1.1 rows=1) (actual time=0.0555..0.398 rows=50 loops=1)
+
+
+[FULLTEXT ngram ('"Tuyet Tac"' không dấu)]
+Runs (ms): 6.539, 8.235, 6.389, 5.763, 5.917 | Median: 6.389 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=1.1 rows=1) (actual time=0.0339..0.266 rows=50 loops=1)
+    -> Filter: (match exp_product_search_bench.`name` against ('"Tuyet Tac"' in boolean mode))  (cost=1.1 rows=1) (actual time=0.033..0.262 rows=50 loops=1)
+        -> Full-text index search on exp_product_search_bench using ft_exp_name_ngram (name='"Tuyet Tac"')  (cost=1.1 rows=1) (actual time=0.0321..0.258 rows=50 loops=1)
+
+
+------------------------------------------------------------
+DATASET SIZE: 500000 ROWS
+------------------------------------------------------------
+Inserted 500000 rows in 8s
+
+[LIKE '%Tuyệt Tác%' (Full Scan)]
+Runs (ms): 73.135, 71.326, 71.205, 72.112, 71.961 | Median: 71.961 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=56731 rows=50) (actual time=77.5..77.6 rows=50 loops=1)
+    -> Filter: (exp_product_search_bench.`name` like '%Tuyệt Tác%')  (cost=56731 rows=54876) (actual time=77.5..77.6 rows=50 loops=1)
+        -> Covering index scan on exp_product_search_bench using idx_exp_name_btree  (cost=56731 rows=493936) (actual time=0.0274..29.4 rows=199550 loops=1)
+
+
+[LIKE 'Hương Trầm%' (B-Tree Prefix)]
+Runs (ms): 1.013, 0.475, 0.421, 0.388, 0.418 | Median: 0.421 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=163 rows=50) (actual time=0.0281..0.0397 rows=50 loops=1)
+    -> Filter: (exp_product_search_bench.`name` like 'Hương Trầm%')  (cost=163 rows=500) (actual time=0.0275..0.0372 rows=50 loops=1)
+        -> Covering index range scan on exp_product_search_bench using idx_exp_name_btree over ('Hương Trầm																																																																																																																																																																																																																																																					' <= name <= 'Hương Trầm￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿￿')  (cost=163 rows=500) (actual time=0.0265..0.0311 rows=50 loops=1)
+
+
+[FULLTEXT ngram ('"Tuyệt Tác"' có dấu)]
+Runs (ms): 93.442, 29.338, 28.833, 36.246, 29.722 | Median: 29.722 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=1.1 rows=1) (actual time=0.0849..0.331 rows=50 loops=1)
+    -> Filter: (match exp_product_search_bench.`name` against ('"Tuyệt Tác"' in boolean mode))  (cost=1.1 rows=1) (actual time=0.0842..0.328 rows=50 loops=1)
+        -> Full-text index search on exp_product_search_bench using ft_exp_name_ngram (name='"Tuyệt Tác"')  (cost=1.1 rows=1) (actual time=0.0829..0.323 rows=50 loops=1)
+
+
+[FULLTEXT ngram ('"Tuyet Tac"' không dấu)]
+Runs (ms): 38.968, 29.514, 29.436, 42.885, 37.797 | Median: 37.797 ms | Returned (LIMIT 50): 50
+EXPLAIN ANALYZE:
+-> Limit: 50 row(s)  (cost=1.1 rows=1) (actual time=0.159..0.518 rows=50 loops=1)
+    -> Filter: (match exp_product_search_bench.`name` against ('"Tuyet Tac"' in boolean mode))  (cost=1.1 rows=1) (actual time=0.158..0.514 rows=50 loops=1)
+        -> Full-text index search on exp_product_search_bench using ft_exp_name_ngram (name='"Tuyet Tac"')  (cost=1.1 rows=1) (actual time=0.157..0.508 rows=50 loops=1)
+
+
+=== SUMMARY TABLE ===
+10000    | LIKE '%Tuyệt Tác%' (Full Scan)          | Median:    3.809 ms | Rows: 10
+10000    | LIKE 'Hương Trầm%' (B-Tree Prefix)     | Median:    0.333 ms | Rows: 10
+10000    | FULLTEXT ngram ('"Tuyệt Tác"' có dấu) | Median:    1.043 ms | Rows: 10
+10000    | FULLTEXT ngram ('"Tuyet Tac"' không dấu) | Median:    0.654 ms | Rows: 10
+100000   | LIKE '%Tuyệt Tác%' (Full Scan)          | Median:   27.412 ms | Rows: 50
+100000   | LIKE 'Hương Trầm%' (B-Tree Prefix)     | Median:    0.472 ms | Rows: 50
+100000   | FULLTEXT ngram ('"Tuyệt Tác"' có dấu) | Median:    6.550 ms | Rows: 50
+100000   | FULLTEXT ngram ('"Tuyet Tac"' không dấu) | Median:    6.389 ms | Rows: 50
+500000   | LIKE '%Tuyệt Tác%' (Full Scan)          | Median:   71.961 ms | Rows: 50
+500000   | LIKE 'Hương Trầm%' (B-Tree Prefix)     | Median:    0.421 ms | Rows: 50
+500000   | FULLTEXT ngram ('"Tuyệt Tác"' có dấu) | Median:   29.722 ms | Rows: 50
+500000   | FULLTEXT ngram ('"Tuyet Tac"' không dấu) | Median:   37.797 ms | Rows: 50

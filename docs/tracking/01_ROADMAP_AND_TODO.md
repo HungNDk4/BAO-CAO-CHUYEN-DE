@@ -88,16 +88,15 @@
 
 ---
 
-## Giai Đoạn 2B: Import Ảnh Thật Từ `picturetemplate/`
+## Giai Đoạn 2B: Import Ảnh Thật Từ `picturetemplate/` (ĐÃ HOÀN THÀNH)
 
-- [ ] **2B.1 Quét và kiểm tra tính toàn vẹn thư mục ảnh:** Quét các thư mục con trong `picturetemplate/`, đếm số lượng ảnh nạp vào.
-- [ ] **2B.2 Chuẩn hóa tên file ảnh tự động:** Chuyển đổi tên file sang tiếng Việt không dấu, viết thường, thay khoảng trắng bằng gạch ngang, độ dài < 40 ký tự.
-- [ ] **2B.3 Import ảnh vào hệ thống:**
-  - Copy ảnh vào `storage/app/public/products/<id>/`.
-  - Cập nhật đường dẫn vào bảng `product_images` trong CSDL.
-  - Cập nhật ảnh branding vào cấu hình theme trong `theme_customization_translations`.
-  - Đồng bộ sang `public/storage/`.
-- [ ] **2B.4 Tái lập chỉ mục & Dọn cache:** Chạy `php artisan indexer:index --mode=full`, `php artisan optimize:clear`.
+- [x] **2B.1 Quét và kiểm tra tính toàn vẹn thư mục ảnh:** Quét 24 thư mục con + `_branding/` trong `picturetemplate/`, xác nhận đủ 24 ảnh sản phẩm (`1000x1000 px`, `172–776 KB`), `logo.png` (`400x100 px`, PNG transparent) và 3 banner (`1920x650 px`).
+- [x] **2B.2 Chuẩn hóa tên file ảnh tự động:** Xây dựng script tái sử dụng [import_perfume_images.php](file:///d:/CD12/bagisto-store/tools/import_perfume_images.php) tự động chuyển tên file sang ASCII không dấu, viết thường, gạch ngang, độ dài < 35 ký tự.
+- [x] **2B.3 Import ảnh vào hệ thống:**
+  - Copy 24 ảnh sản phẩm vào `storage/app/public/product/<id>/` và cập nhật bảng `product_images`.
+  - Cập nhật `channels.logo` (`channel/1/logo.png`) và 3 slide banner trong `theme_section_translations` (`section_id = 19`, cả `vi` và `en`).
+  - Đồng bộ 216 file sang `public/storage/`.
+- [x] **2B.4 Tái lập chỉ mục & Dọn cache:** Đã chạy `php artisan indexer:index --mode=full`, `php artisan optimize:clear` và `php artisan responsecache:clear`.
 
 ---
 
@@ -120,24 +119,21 @@
 
 ## Giai Đoạn 4: 3 Thực Nghiệm CSDL Chuyên Sâu & Kiểm Thử QA Chuẩn ISTQB
 
-- [ ] **4.1 Thực nghiệm Benchmark 1 — Tối ưu hóa truy vấn tìm kiếm tiếng Việt:**
-  - Tạo bảng thực nghiệm riêng biệt: `exp_product_search_bench`.
-  - So sánh chi phí (Query Cost), số dòng duyệt (Rows Examined) và thời gian thực thi (Execution Time) qua `EXPLAIN ANALYZE`:
-    - Truy vấn `LIKE %...%` (Full table scan).
-    - Truy vấn B-Tree Index (Prefix matching `LIKE '...'`).
-    - Truy vấn FULLTEXT Index (ngram parser tiếng Việt).
-  - Khảo sát các trường hợp: tiếng Việt có dấu, không dấu, từ ngắn 2–3 ký tự.
-- [ ] **4.2 Thực nghiệm Benchmark 2 — Mô phỏng khóa bi quan (`SELECT ... FOR UPDATE`):**
-  - Thực hiện trên bản sao bảng tồn kho: `exp_product_inventories`.
-  - Trường hợp 1: Không dùng khóa $\rightarrow$ 2 giao dịch đồng thời mua sản phẩm `qty = 1` $\rightarrow$ xảy ra Overselling (tồn kho âm `-1`).
-  - Trường hợp 2: Dùng `SELECT ... FOR UPDATE` trong Transaction của Laravel $\rightarrow$ giao dịch thứ 2 bị chặn hoặc nhận thông báo hết hàng an toàn $\rightarrow$ bảo toàn toàn vẹn dữ liệu.
-- [ ] **4.3 Thực nghiệm Benchmark 3 — Quy trình sao lưu & Kiểm tra toàn vẹn CSDL:**
-  - Sao lưu bằng `mysqldump` kèm cờ chuẩn: `--single-transaction --routines --triggers --events`.
-  - Phục hồi sang database thử nghiệm `bagisto_restore_test`.
-  - Xác thực toàn vẹn bằng lệnh `COUNT(*)` trên các bảng lõi và `CHECKSUM TABLE` đối chiếu 100% khớp.
-- [ ] **4.4 Hỗ trợ QA kiểm thử Hộp đen (20 Test Cases ISTQB):**
-  - Hỗ trợ thành viên Phát chạy và nghiệm thu 20 Test Cases (EP/BVA) trên giao diện tiếng Việt hoàn chỉnh.
-  - Cập nhật Ma trận truy xuất nguồn gốc yêu cầu (RTM) và đánh giá chất lượng phần mềm theo tiêu chuẩn ISO/IEC 25010.
+- [x] **4.1 Thực nghiệm Benchmark 1 — Tối ưu hóa truy vấn tìm kiếm tiếng Việt:**
+  - Chạy thực nghiệm trên bảng cô lập `exp_product_search_bench` ở 3 cỡ `10k / 100k / 500k` dòng qua [bench_search_vietnamese.php](file:///d:/CD12/bagisto-store/tools/bench_search_vietnamese.php), lưu nguyên văn `EXPLAIN ANALYZE` tại [bench_a_search_raw.txt](file:///d:/CD12/bagisto-store/mockdata/bench_a_search_raw.txt).
+- [x] **4.2 Thực nghiệm Benchmark 2 — Mô phỏng khóa bi quan (`SELECT ... FOR UPDATE`):**
+  - Chạy song song nhiều tiến trình PHP trên `exp_product_inventories` (`qty=1` với 2 luồng; `qty=5` với 8 luồng) qua [bench_concurrency_inventory.php](file:///d:/CD12/bagisto-store/tools/bench_concurrency_inventory.php), lưu log thật tại [bench_b_concurrency_raw.txt](file:///d:/CD12/bagisto-store/mockdata/bench_b_concurrency_raw.txt) (mô phỏng & đề xuất giải pháp).
+- [x] **4.3 Thực nghiệm Benchmark 3 — Quy trình sao lưu & Kiểm tra toàn vẹn CSDL:**
+  - Chạy `mysqldump --single-transaction --routines --triggers --events` + restore vào `bagisto_restore_test` + đối chiếu `COUNT(*)` & `CHECKSUM TABLE` trên 13 bảng lõi (khớp 100%) qua [bench_backup_checksum.php](file:///d:/CD12/bagisto-store/tools/bench_backup_checksum.php), lưu log tại [bench_c_backup_raw.txt](file:///d:/CD12/bagisto-store/mockdata/bench_c_backup_raw.txt).
+- [x] **4.4 Tính năng mở rộng (Bắt buộc + Tùy chọn A, B, C, D) & 5 Test Cases bổ sung (`TC-21`..`TC-25`):**
+  - **Tính năng A (Guest Order Tracking):** `/tra-cuu-don-hang` qua [PerfumeStoreServiceProvider.php](file:///d:/CD12/bagisto-store/app/Providers/PerfumeStoreServiceProvider.php) + [OrderTrackingController.php](file:///d:/CD12/bagisto-store/app/Http/Controllers/Shop/OrderTrackingController.php) (`throttle:5,1`, hỗ trợ `vi`/`en`, ẩn PII, thông báo lỗi chung).
+  - **Tính năng B (VietQR cục bộ):** [VietQrPayload.php](file:///d:/CD12/bagisto-store/app/Support/VietQrPayload.php) + [perfume_payment.php](file:///d:/CD12/bagisto-store/config/perfume_payment.php) + theme override [success.blade.php](file:///d:/CD12/bagisto-store/resources/themes/default/views/checkout/success.blade.php) (nội dung `DH{increment_id}`, QR SVG offline 100%).
+  - **Tính năng C (Kim tự tháp 3 tầng hương):** [FragrancePyramidParser.php](file:///d:/CD12/bagisto-store/app/Support/FragrancePyramidParser.php) + [fragrance-pyramid.blade.php](file:///d:/CD12/bagisto-store/resources/views/shop/partials/fragrance-pyramid.blade.php) (hiển thị trực quan trên 24/24 trang chi tiết sản phẩm).
+  - **Tính năng D (Scent Finder Quiz):** `/tim-mui-huong` qua [ScentFinderController.php](file:///d:/CD12/bagisto-store/app/Http/Controllers/Shop/ScentFinderController.php) + [scent-finder.blade.php](file:///d:/CD12/bagisto-store/resources/views/shop/scent-finder.blade.php), đã capture SQL lọc EAV thật tại [eav_filter_sql_capture.txt](file:///d:/CD12/bagisto-store/mockdata/eav_filter_sql_capture.txt).
+  - **Media Hybrid Fallback:** JS `onerror` chuyển `res.cloudinary.com` $\rightarrow$ `/storage/...` tiêm qua `bagisto.shop.layout.body.after`.
+  - Kiểm thử tự động toàn bộ A, B, C, D & `TC-21`..`TC-25` đạt **100% PASS**.
+- [x] **4.5 Hoàn tất xuất bản CSDL cuối cùng:** Xuất `mockdata/database_final.sql` sau khi hoàn thành toàn bộ tính năng.
+- [ ] **4.6 Nghiệm thu 20 Test Cases ISTQB gốc trên giao diện & điền vào Báo cáo Chuyên đề 2:** Cập nhật bảng kết quả 20 TC gốc + 5 TC bổ sung (`TC-21`..`TC-25`), Ma trận RTM và ISO/IEC 25010 vào file báo cáo của Phát.
 
 ---
 

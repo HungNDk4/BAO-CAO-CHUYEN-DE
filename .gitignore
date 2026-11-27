@@ -4,6 +4,8 @@
 .cursor
 .env
 .env.*
+.env.demo
+.env.dev.bak
 !.env.example
 .idea
 .mcp.json

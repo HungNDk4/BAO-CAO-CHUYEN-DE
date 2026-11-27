@@ -31,35 +31,31 @@
 
 ---
 
-## 2. Trạng Thái Bàn Giao Hiện Tại (Cập Nhật: Ngày 24/11/2026)
+## 2. Trạng Thái Bàn Giao Hiện Tại (Cập Nhật: Ngày 27/11/2026)
 
-### [BÀN GIAO PHIÊN LÀM VIỆC — NGÀY 25/11/2026]
+### [BÀN GIAO PHIÊN LÀM VIỆC — NGÀY 27/11/2026]
 
 1. **Phiên vừa rồi làm xong gì:**
-   - **Giải đáp nguyên nhân kỹ thuật mất ảnh khi ngắt Wifi:** Phân tích cặn kẽ 3 nguyên nhân cốt lõi (Driver Cloudinary/CDN trỏ URL bên thứ ba, DNS Timeout khi ngắt mạng, và lỗi gãy Symlink NTFS trên Windows) $\rightarrow$ Khẳng định giải pháp Self-Hosted Local Storage (`FILESYSTEM_DISK=public` + `setup.bat`) là kiến trúc loại bỏ Single Point of Failure (SPOF) cho buổi bảo vệ đồ án trước Hội đồng.
-   - **Xây dựng Script Rải Đơn Hàng Linh Hoạt (`tools/seed_scattered_orders.php`):**
-     * Thiết kế script PHP CLI chạy độc lập, tái sử dụng không giới hạn: `php tools/seed_scattered_orders.php [count=30] [end_date=today|YYYY-MM-DD]`.
-     * Tự động tạo 5 tài khoản khách hàng Việt Nam (`customers`) và kết hợp 40% khách vãng lai (Guest Checkout) với họ tên, số điện thoại, địa chỉ phân bố khắp các tỉnh thành (Hà Nội, TP.HCM, Đà Nẵng, Cần Thơ, Hải Phòng...).
-     * Rải 30 đơn hàng giả lập thực tế với tỷ lệ chuẩn: 16 Hoàn thành (53%), 8 Đang xử lý (27%), 4 Chờ thanh toán (13%), 2 Đã hủy (7%).
-     * Đảm bảo toàn vẹn quan hệ trên toàn bộ 8 bảng lõi: `orders`, `order_items`, `addresses` (shipping + billing), `order_payment`, `order_transactions`, `invoices`, `invoice_items`, `shipments`, `shipment_items`.
-     * Rải đều đặn 1 ngày 1 đơn trong suốt 30 ngày (26/10/2026 - 25/11/2026) giúp biểu đồ Dashboard hiển thị đầy đủ các cột thay vì dồn vào 1 ngày.
-   - **Chụp ảnh kiểm chứng thực tế:**
-     * Chụp ảnh danh sách đơn hàng Admin (`step06_admin_scattered_orders.png`).
-     * Chụp ảnh biểu đồ Admin Dashboard 30 ngày trải đều (`step06_admin_dashboard_scattered_30days.png`).
-   - **Xuất bản CSDL hoàn thiện:**
-     * Chạy `mysqldump` xuất file sao lưu `mockdata/database_final.sql` (1.5 MB), hoàn tất toàn bộ Giai đoạn 3 trong Roadmap.
+   - **Đóng Ngày 1:** Cập nhật `section_id = 22` (`vi`), kiểm chứng restore `mockdata/backup_before_day1.sql` (147 bảng), bổ sung `packages/Webkul/Core/src/Resources/lang/vi/validation.php` (0 key thiếu toàn bộ 7 bộ lang), tạo `.env.demo`, cấu hình Laragon vhost `bagisto-store.test`, build Shop Vite, đo tốc độ (Warm TTFB median `656.2 ms` $\rightarrow$ `553.2 ms`), kiểm tra `13/13` asset HTTP 200.
+   - **Hoàn tất Ngày 2–3 (3 Benchmark CSDL):** Chạy thực nghiệm trên bảng cô lập `exp_*` qua `tools/bench_search_vietnamese.php`, `tools/bench_concurrency_inventory.php`, `tools/bench_backup_checksum.php` và lưu raw log tại `mockdata/bench_*_raw.txt`.
+   - **Triển khai hoàn tất Tính năng A, B, C, D & Media Hybrid Fallback (không sửa core Bagisto):**
+     * **Guest Order Tracking (`/tra-cuu-don-hang`):** Đăng ký qua `PerfumeStoreServiceProvider` với middleware `shop` + `throttle:5,1`, dùng `OrderRepository`, hỗ trợ `vi`/`en`, thông báo lỗi chung, ẩn PII.
+     * **VietQR Cục Bộ:** `app/Support/VietQrPayload.php` (EMVCo + CRC16-CCITT + `BaconQrCode` SVG offline), `config/perfume_payment.php` (đọc `.env` placeholder), theme override `resources/themes/default/views/checkout/success.blade.php` (nội dung `DH{increment_id}`).
+     * **Kim tự tháp 3 tầng hương (C):** `app/Support/FragrancePyramidParser.php` + `resources/views/shop/partials/fragrance-pyramid.blade.php` tiêm qua `bagisto.shop.products.view.description.before` (24/24 sản phẩm parse & hiển thị chuẩn).
+     * **Scent Finder Quiz (D):** `/tim-mui-huong` (`ScentFinderController` + `scent-finder.blade.php`), redirect sang bộ lọc EAV chuẩn của Bagisto; đã capture SQL EAV thật tại `mockdata/eav_filter_sql_capture.txt`.
+     * **Media Hybrid Fallback:** JS `onerror` tự chuyển `res.cloudinary.com` $\rightarrow$ `/storage/...` qua `bagisto.shop.layout.body.after`.
+   - **Kiểm thử tự động & Xuất bản CSDL cuối cùng:** Tất cả kiểm thử `TC-21`..`TC-25`, C, D và Media Hybrid đạt **100% PASS**; đã xuất `mockdata/database_final.sql`.
 
 2. **Trạng thái Kỹ thuật & CSDL hiện tại:**
    - **Nhánh Git hiện tại:** `feature/vietnamese-localization`.
-   - **Trạng thái CSDL:** 36 đơn hàng tổng cộng (trong đó 30 đơn hàng nước hoa rải đều theo dòng thời gian), 5 tài khoản khách hàng Việt Nam, 103 bản ghi nước hoa tiếng Việt, 2 mã giảm giá hoạt động, 2 phương thức thanh toán.
-   - **Trạng thái Môi trường:** `APP_LOCALE=vi`, `APP_CURRENCY=VND`, `FILESYSTEM_DISK=public`. Server và MySQL daemon chạy ổn định 100% offline trên cổng 8000.
+   - **Trạng thái CSDL & Media:** 24/24 sản phẩm nước hoa chủ lực đã gắn ảnh thật, logo & 3 banner đã cập nhật; toàn bộ file tồn tại trong `public/storage/`.
+   - **Trạng thái Môi trường:** `APP_LOCALE=vi`, `APP_CURRENCY=VND`, `FILESYSTEM_DISK=public`, MySQL chạy ổn định trên cổng 3306.
 
 3. **Cảnh báo / Lưu ý quan trọng cho phiên sau:**
-   - Script `tools/seed_scattered_orders.php` mặc định kích hoạt chế độ `--clean` để thay thế đơn mock cũ (ID > 6), tránh bị phình số lượng đơn khi người dùng chạy lại nhiều lần.
-   - Khi chạy trên ngày bảo vệ thực tế vào tháng 12/2026, chỉ cần gõ đúng 1 lệnh: `php tools/seed_scattered_orders.php 30 today` hoặc `php tools/seed_scattered_orders.php 30 2026-12-XX`.
+   - Khi bạn Phát thay hoặc thêm ảnh vào `picturetemplate/`, chỉ cần chạy lại đúng 1 lệnh: `php tools/import_perfume_images.php` rồi chạy `php artisan optimize:clear` và `php artisan responsecache:clear`.
+   - Khi demo cho giảng viên hoặc bảo vệ đồ án, nên tắt `APP_DEBUG=false`, chạy `php artisan optimize` và truy cập qua Nginx/Apache của Laragon (tránh `php artisan serve` đơn luồng).
    - Tuyệt đối **KHÔNG** push trực tiếp lên nhánh `main`.
    - Sau mỗi lượt chạy phải in **Báo Cáo Tiến Độ 4 Dòng**.
 
 4. **HÀNH ĐỘNG CẦN THỰC HIỆN NGAY Ở PHIÊN TIẾP THEO:**
-   - **Lựa chọn 1 (Giai đoạn 2B):** Khi có bộ ảnh thật từ bạn Phát trong `picturetemplate/`, chạy kịch bản import ảnh vào `storage/app/public/products/<id>/`.
-   - **Lựa chọn 2 (Giai đoạn 4):** Triển khai 3 bài thực nghiệm Benchmark CSDL chuyên sâu (Benchmark 1: Fulltext ngram vs B-tree vs LIKE; Benchmark 2: Bi quan Pessimistic Locking chống Race Condition; Benchmark 3: Kiểm tra toàn vẹn và phục hồi dữ liệu mysqldump) để đưa số liệu vào Báo cáo Chuyên đề 1.
+   - **Giai đoạn 4.5 & Giai đoạn 5:** Hoàn thiện nghiệm thu 20 Test Cases ISTQB gốc + 5 Test Cases bổ sung (`TC-21`..`TC-25`), Ma trận RTM, đánh giá ISO/IEC 25010, biên tập 2 cuốn Báo cáo, quay video demo offline và luyện 30 câu hỏi-đáp. (Cập nhật `VIETQR_BANK_BIN`, `VIETQR_BANK_NAME`, `VIETQR_ACCOUNT_NUMBER`, `VIETQR_ACCOUNT_NAME` trong `.env` nếu muốn dùng STK thật).
