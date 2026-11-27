@@ -3,7 +3,9 @@
 @inject('sectionRepository', 'Webkul\Theme\Repositories\SectionRepository')
 
 @php
+    /** @var \Webkul\Core\Models\Channel $channel */
     $channel = core()->getCurrentChannel();
+    $isVi = app()->getLocale() === 'vi';
 
     $section = $sectionRepository->findOneOfType(
         \Webkul\Theme\Enums\SectionTypeEnum::FOOTER_LINKS->value,
@@ -16,7 +18,13 @@
         ->map(fn ($links) => array_filter((array) $links, fn ($link) => filled($link['title'] ?? null)))
         ->filter();
 
-    $col1Links = $columns->get('column_1') ?? [
+    $defaultCol1Links = $isVi ? [
+        ['title' => 'Về Chúng Tôi', 'url' => url('/page/ve-chung-toi')],
+        ['title' => 'Chăm Sóc Khách Hàng', 'url' => url('/page/cham-soc-khach-hang')],
+        ['title' => 'Bộ Sưu Tập Mới', 'url' => url('/page/xu-huong-moi')],
+        ['title' => 'Điều Khoản Sử Dụng', 'url' => url('/page/dieu-khoan-su-dung')],
+        ['title' => 'Điều Kiện Giao Dịch', 'url' => url('/page/dieu-kien-giao-dich')],
+    ] : [
         ['title' => 'About Us', 'url' => url('/page/about-us')],
         ['title' => 'Customer Service', 'url' => url('/page/customer-service')],
         ['title' => 'New Arrivals & Trends', 'url' => url('/page/whats-new')],
@@ -24,13 +32,22 @@
         ['title' => 'Terms & Conditions', 'url' => url('/page/terms-conditions')],
     ];
 
-    $col2Links = $columns->get('column_2') ?? [
+    $defaultCol2Links = $isVi ? [
+        ['title' => 'Chính Sách Bảo Mật', 'url' => url('/page/chinh-sach-bao-mat')],
+        ['title' => 'Chính Sách Thanh Toán', 'url' => url('/page/chinh-sach-thanh-toan')],
+        ['title' => 'Chính Sách Vận Chuyển', 'url' => url('/page/chinh-sach-giao-hang')],
+        ['title' => 'Chính Sách Đổi Trả', 'url' => url('/page/chinh-sach-doi-tra')],
+        ['title' => 'Chính Sách Hoàn Tiền', 'url' => url('/page/chinh-sach-hoan-tien')],
+    ] : [
         ['title' => 'Privacy Policy', 'url' => url('/page/privacy-policy')],
         ['title' => 'Payment Policy', 'url' => url('/page/payment-policy')],
         ['title' => 'Shipping Policy', 'url' => url('/page/shipping-policy')],
         ['title' => 'Return Policy', 'url' => url('/page/return-policy')],
         ['title' => 'Refund Policy', 'url' => url('/page/refund-policy')],
     ];
+
+    $col1Links = $columns->get('column_1') ?? $defaultCol1Links;
+    $col2Links = $columns->get('column_2') ?? $defaultCol2Links;
 @endphp
 
 <footer
@@ -47,22 +64,22 @@
             <!-- Column 1: Showroom Info -->
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 <h3 style="font-size: 21px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #0f172a; margin: 0 0 8px 0;">
-                    ShopSiuu Gaming Gear
+                    {{ $isVi ? 'Cửa Hàng Nước Hoa Chính Hãng' : 'Perfume Store Luxury' }}
                 </h3>
                 <p style="font-size: 16px; line-height: 1.7; color: #64748b; margin: 0 0 6px 0;">
-                    Authorized distributor of authentic gaming gear, mechanical keyboards, and precision peripherals.
+                    {{ $isVi ? 'Hệ sinh thái phân phối nước hoa niche & designer chuẩn Authentic hàng đầu.' : 'Authorized distributor of authentic niche & designer perfumes, high-end fragrances.' }}
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 16px; color: #64748b;">
-                    <p style="margin: 0;"><strong style="color: #1e293b;">Address:</strong> 127e Le Lu, Tan Phu District, Ho Chi Minh City</p>
-                    <p style="margin: 0;"><strong style="color: #1e293b;">Hotline:</strong> 0909 xxx xxx (08:30 - 21:30)</p>
-                    <p style="margin: 0;"><strong style="color: #1e293b;">Email:</strong> support@shopsiuu.com</p>
+                    <p style="margin: 0;"><strong style="color: #1e293b;">{{ $isVi ? 'Địa chỉ:' : 'Address:' }}</strong> {{ $isVi ? '127e Lê Lư, P. Phú Thọ Hòa, TP. Hồ Chí Minh' : '127e Le Lu, Phu Tho Hoa Ward, Ho Chi Minh City' }}</p>
+                    <p style="margin: 0;"><strong style="color: #1e293b;">{{ $isVi ? 'Hotline:' : 'Hotline:' }}</strong> 0909 xxx xxx (08:30 - 21:30)</p>
+                    <p style="margin: 0;"><strong style="color: #1e293b;">{{ $isVi ? 'Email:' : 'Email:' }}</strong> support@perfumestore.vn</p>
                 </div>
             </div>
 
             <!-- Column 2: Customer Support -->
             <div style="display: flex; flex-direction: column; gap: 14px;" v-pre>
                 <h3 style="font-size: 21px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #0f172a; margin: 0 0 8px 0;">
-                    Customer Support
+                    {{ $isVi ? 'Hỗ Trợ Khách Hàng' : 'Customer Support' }}
                 </h3>
                 <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; font-size: 16px;">
                     @foreach ($col1Links as $link)
@@ -83,7 +100,7 @@
             <!-- Column 3: Store Policies -->
             <div style="display: flex; flex-direction: column; gap: 14px;" v-pre>
                 <h3 style="font-size: 21px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #0f172a; margin: 0 0 8px 0;">
-                    Store Policies
+                    {{ $isVi ? 'Chính Sách Cửa Hàng' : 'Store Policies' }}
                 </h3>
                 <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; font-size: 16px;">
                     @foreach ($col2Links as $link)
@@ -104,10 +121,10 @@
             <!-- Column 4: Newsletter -->
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 <h3 style="font-size: 21px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #0f172a; margin: 0 0 8px 0;">
-                    Newsletter
+                    {{ $isVi ? 'Đăng Ký Nhận Tin' : 'Newsletter' }}
                 </h3>
                 <p style="font-size: 16px; line-height: 1.7; color: #64748b; margin: 0 0 6px 0;">
-                    Subscribe to receive a 10% discount voucher for your first order.
+                    {{ $isVi ? 'Nhận ưu đãi độc quyền và cập nhật những dòng nước hoa mới nhất.' : 'Subscribe to receive exclusive offers and latest fragrance releases.' }}
                 </p>
 
                 {!! view_render_event('bagisto.shop.layout.footer.newsletter_subscription.before') !!}
@@ -118,11 +135,12 @@
                     style="display: flex; align-items: stretch; width: 100%; margin: 8px 0 10px 0;"
                 >
                     @csrf
+
                     <input
                         type="email"
                         name="email"
                         required
-                        placeholder="Enter your email address..."
+                        placeholder="{{ $isVi ? 'Nhập email của bạn...' : 'Enter your email address...' }}"
                         style="flex: 1; min-width: 0; height: 48px; padding: 0 16px; border: 1.5px solid #cbd5e1; border-right: none; border-radius: 8px 0 0 8px; font-size: 16px; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;"
                     />
                     <button
@@ -131,14 +149,14 @@
                         onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.borderColor='#1d4ed8';"
                         onmouseout="this.style.backgroundColor='#2563eb'; this.style.borderColor='#2563eb';"
                     >
-                        Subscribe
+                        {{ $isVi ? 'Đăng ký' : 'Subscribe' }}
                     </button>
                 </form>
 
                 {!! view_render_event('bagisto.shop.layout.footer.newsletter_subscription.after') !!}
 
                 <div style="font-size: 16px; font-weight: 600; color: #16a34a; margin-top: 4px;">
-                    ✓ 100% Genuine Guarantee
+                    {{ $isVi ? '✓ Cam kết 100% chính hãng' : '✓ 100% Genuine Guarantee' }}
                 </div>
             </div>
 
@@ -153,7 +171,7 @@
             @if (core()->getConfigData('general.content.footer.copyright_content'))
                 {!! clean_content((string) core()->getConfigData('general.content.footer.copyright_content')) !!}
             @else
-                © {{ date('Y') }} ShopSiuu Store – Graduation Capstone Project E-Commerce Platform. All rights reserved.
+                {{ $isVi ? '© ' . date('Y') . ' Perfume Store – Hệ thống Phân phối Nước hoa Chính hãng. All rights reserved.' : '© ' . date('Y') . ' Perfume Store – Luxury Fragrance E-Commerce Platform. All rights reserved.' }}
             @endif
         </p>
 

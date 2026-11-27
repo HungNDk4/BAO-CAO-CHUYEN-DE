@@ -4,6 +4,8 @@
 .cursor
 .env
 .env.*
+.env.demo
+.env.dev.bak
 !.env.example
 .idea
 .mcp.json
@@ -65,6 +67,8 @@ yarn-error.log
 # 4. Giữ thư mục chứa database mẫu và script tự động
 !/mockdata/
 !/mockdata/**
+mockdata/*.sql
+mockdata/*.zip
 !setup.bat
 
 # 5. Giữ tệp ngôn ngữ mở rộng (nếu có)

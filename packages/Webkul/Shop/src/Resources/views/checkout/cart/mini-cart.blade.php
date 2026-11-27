@@ -352,7 +352,7 @@
                 </x-slot>
             </x-shop::drawer>
         @else
-            <a href="{{ route('shop.checkout.onepage.index') }}">
+            <a href="{{ route('shop.checkout.cart.index') }}">
                 {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.toggle.before') !!}
 
                     <span class="relative">
