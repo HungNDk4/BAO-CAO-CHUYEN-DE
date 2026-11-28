@@ -29,7 +29,32 @@
 
     <v-customer-search ref="selectCustomerComponent"></v-customer-search>
 
-    <x-admin::datagrid :src="route('admin.sales.orders.index')" :isMultiRow="true">
+    @php
+        $activeStatus = request()->query('status', '');
+        $statusTabs = [
+            '' => __('admin::app.datagrid.filters.select'),
+            \Webkul\Sales\Models\Order::STATUS_PENDING_PAYMENT => __('admin::app.sales.orders.index.datagrid.pending-payment'),
+            \Webkul\Sales\Models\Order::STATUS_PENDING => __('admin::app.sales.orders.index.datagrid.pending'),
+            \Webkul\Sales\Models\Order::STATUS_PROCESSING => __('admin::app.sales.orders.index.datagrid.processing'),
+            \Webkul\Sales\Models\Order::STATUS_COMPLETED => __('admin::app.sales.orders.index.datagrid.completed'),
+            \Webkul\Sales\Models\Order::STATUS_CANCELED => __('admin::app.sales.orders.index.datagrid.canceled'),
+            \Webkul\Sales\Models\Order::STATUS_CLOSED => __('admin::app.sales.orders.index.datagrid.closed'),
+            \Webkul\Sales\Models\Order::STATUS_FRAUD => __('admin::app.sales.orders.index.datagrid.fraud'),
+        ];
+    @endphp
+
+    <div class="mt-4 flex flex-wrap items-center gap-2">
+        @foreach ($statusTabs as $statusValue => $statusLabel)
+            <a
+                href="{{ $statusValue !== '' ? route('admin.sales.orders.index', ['status' => $statusValue]) : route('admin.sales.orders.index') }}"
+                class="rounded-lg border px-3 py-1.5 text-xs font-medium transition {{ $activeStatus === $statusValue ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300' }}"
+            >
+                {{ $statusValue === '' ? 'Tất cả' : $statusLabel }}
+            </a>
+        @endforeach
+    </div>
+
+    <x-admin::datagrid :src="route('admin.sales.orders.index', request()->only('status'))" :isMultiRow="true">
         <template #header="{
             isLoading,
             available,

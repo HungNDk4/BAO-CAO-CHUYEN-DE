@@ -68,13 +68,23 @@
 
         <link
             rel="preload" as="style"
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap"
         />
 
         <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap"
         />
+
+        <style>
+            body, .font-poppins, h1, h2, h3, h4, p, a, button, .siuu-title, .siuu-desc, .siuu-tagline, .siuu-btn {
+                font-family: 'Be Vietnam Pro', sans-serif !important;
+            }
+
+            .font-dmserif, .home-offer h1 {
+                font-family: 'Playfair Display', serif !important;
+            }
+        </style>
 
         @stack('styles')
 

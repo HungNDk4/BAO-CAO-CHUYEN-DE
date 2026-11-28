@@ -17,6 +17,39 @@
                 <span class="label-{{ $order->status }} text-sm mx-1.5">
                     @lang("admin::app.sales.orders.view.$order->status")
                 </span>
+
+                <form
+                    method="POST"
+                    action="{{ route('admin.sales.orders.update_status', $order->id) }}"
+                    class="flex items-center gap-1.5"
+                >
+                    @csrf
+                    <select
+                        name="status"
+                        class="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                    >
+                        @foreach ([
+                            \Webkul\Sales\Models\Order::STATUS_PENDING_PAYMENT,
+                            \Webkul\Sales\Models\Order::STATUS_PENDING,
+                            \Webkul\Sales\Models\Order::STATUS_PROCESSING,
+                            \Webkul\Sales\Models\Order::STATUS_COMPLETED,
+                            \Webkul\Sales\Models\Order::STATUS_CANCELED,
+                            \Webkul\Sales\Models\Order::STATUS_CLOSED,
+                            \Webkul\Sales\Models\Order::STATUS_FRAUD,
+                        ] as $statusOption)
+                            <option value="{{ $statusOption }}" @selected($order->status === $statusOption)>
+                                @lang("admin::app.sales.orders.view.$statusOption")
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <button
+                        type="submit"
+                        class="secondary-button px-2.5 py-1 text-xs"
+                    >
+                        @lang('admin::app.sales.rma.all-rma.view.save-btn')
+                    </button>
+                </form>
             </div>
 
             {!! view_render_event('bagisto.admin.sales.order.title.after', ['order' => $order]) !!}

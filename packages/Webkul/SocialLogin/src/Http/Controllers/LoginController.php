@@ -62,8 +62,16 @@ class LoginController extends Controller
         $this->abortUnlessEnabled($provider);
 
         try {
-            $user = Socialite::driver($provider)->user();
+            $driver = Socialite::driver($provider);
+
+            $user = method_exists($driver, 'stateless')
+                ? $driver->stateless()->user()
+                : $driver->user();
         } catch (\Exception $e) {
+            report($e);
+
+            session()->flash('error', $e->getMessage());
+
             return redirect()->route('shop.customer.session.index');
         }
 

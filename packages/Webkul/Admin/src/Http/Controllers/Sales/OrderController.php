@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Sales;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ use Webkul\Admin\Http\Resources\CartResource;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Checkout\Repositories\CartRepository;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
+use Webkul\Sales\Models\Order;
 use Webkul\Sales\Repositories\OrderCommentRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Transformers\OrderResource;
@@ -189,6 +191,35 @@ class OrderController extends Controller
         } else {
             session()->flash('error', trans('admin::app.sales.orders.view.create-error'));
         }
+
+        return redirect()->route('admin.sales.orders.view', $id);
+    }
+
+    /**
+     * Update the status of an order directly from admin.
+     */
+    public function updateStatus(int $id): RedirectResponse
+    {
+        $validated = $this->validate(request(), [
+            'status' => [
+                'required',
+                'in:'.implode(',', [
+                    Order::STATUS_PENDING,
+                    Order::STATUS_PENDING_PAYMENT,
+                    Order::STATUS_PROCESSING,
+                    Order::STATUS_COMPLETED,
+                    Order::STATUS_CANCELED,
+                    Order::STATUS_CLOSED,
+                    Order::STATUS_FRAUD,
+                ]),
+            ],
+        ]);
+
+        $this->orderRepository->update([
+            'status' => $validated['status'],
+        ], $id);
+
+        session()->flash('success', trans('admin::app.sales.orders.view.'.$validated['status']));
 
         return redirect()->route('admin.sales.orders.view', $id);
     }

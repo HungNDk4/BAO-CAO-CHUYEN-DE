@@ -133,6 +133,10 @@
   - **Media Hybrid Fallback:** JS `onerror` chuyển `res.cloudinary.com` $\rightarrow$ `/storage/...` tiêm qua `bagisto.shop.layout.body.after`.
   - Kiểm thử tự động toàn bộ A, B, C, D & `TC-21`..`TC-25` đạt **100% PASS**.
 - [x] **4.5 Hoàn tất xuất bản CSDL cuối cùng:** Xuất `mockdata/database_final.sql` sau khi hoàn thành toàn bộ tính năng.
+- [x] **4.5B Tích hợp SePay Webhook + Nút giả lập Demo Offline & Chuẩn bị Google OAuth (28/11/2026):**
+  - Triển khai [SepayPaymentService.php](file:///d:/CD12/bagisto-store/app/Services/SepayPaymentService.php) dùng `DB::transaction()` + `lockForUpdate()` trên `orders`, kiểm tra `canInvoice()`, gọi `InvoiceRepository::create()` và ghi `order_transactions` (chống trùng lặp idempotency).
+  - Triển khai [SepayWebhookController.php](file:///d:/CD12/bagisto-store/app/Http/Controllers/Shop/SepayWebhookController.php) với route `POST /webhooks/sepay` (miễn CSRF trong [bootstrap/app.php](file:///d:/CD12/bagisto-store/bootstrap/app.php), xác thực `Authorization: Apikey` bằng `hash_equals`) và route `POST /thanh-toan/sepay/mo-phong` khóa chặt bởi `app()->environment('local') && config('perfume_payment.sepay.allow_demo_simulation')`.
+  - Cập nhật [success.blade.php](file:///d:/CD12/bagisto-store/resources/themes/default/views/checkout/success.blade.php), [perfume_payment.php](file:///d:/CD12/bagisto-store/config/perfume_payment.php), `lang/vi/perfume.php`, `lang/en/perfume.php`, `.env`, `.env.example` (chuẩn bị sẵn `GOOGLE_*`, `VIETQR_*`, `SEPAY_*`).
 - [ ] **4.6 Nghiệm thu 20 Test Cases ISTQB gốc trên giao diện & điền vào Báo cáo Chuyên đề 2:** Cập nhật bảng kết quả 20 TC gốc + 5 TC bổ sung (`TC-21`..`TC-25`), Ma trận RTM và ISO/IEC 25010 vào file báo cáo của Phát.
 
 ---

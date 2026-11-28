@@ -2,12 +2,14 @@
 
 namespace Webkul\Shop\Http\Controllers\API;
 
+use App\Services\SepayPaymentService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Webkul\CartRule\Exceptions\CouponUsageLimitExceededException;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Payment\Facades\Payment;
+use Webkul\Sales\Models\Order;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Transformers\OrderResource;
 use Webkul\Shipping\Facades\Shipping;
@@ -195,9 +197,20 @@ class OnepageController extends APIController
 
         session()->flash('order_id', $order->id);
 
+        $redirectUrl = route('shop.checkout.onepage.success');
+
+        if (
+            $order->payment?->method === 'moneytransfer'
+            && app(SepayPaymentService::class)->isGatewayConfigured()
+        ) {
+            $order->update(['status' => Order::STATUS_PENDING_PAYMENT]);
+
+            $redirectUrl = route('shop.sepay.gateway_checkout', ['incrementId' => $order->increment_id]);
+        }
+
         return new JsonResource([
             'redirect' => true,
-            'redirect_url' => route('shop.checkout.onepage.success'),
+            'redirect_url' => $redirectUrl,
         ]);
     }
 

@@ -47,6 +47,20 @@ class OrderDataGrid extends DataGrid
         $this->addFilter('full_name', DB::raw('CONCAT('.DB::getTablePrefix().'orders.customer_first_name, " ", '.DB::getTablePrefix().'orders.customer_last_name)'));
         $this->addFilter('created_at', 'orders.created_at');
 
+        $status = request()->query('status');
+
+        if (in_array($status, [
+            Order::STATUS_PENDING,
+            Order::STATUS_PENDING_PAYMENT,
+            Order::STATUS_PROCESSING,
+            Order::STATUS_COMPLETED,
+            Order::STATUS_CANCELED,
+            Order::STATUS_CLOSED,
+            Order::STATUS_FRAUD,
+        ], true)) {
+            $queryBuilder->where('orders.status', $status);
+        }
+
         return $queryBuilder;
     }
 
