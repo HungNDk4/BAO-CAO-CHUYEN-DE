@@ -59,6 +59,7 @@ class SepayPaymentService
             'order_amount' => $amount,
             'operation' => 'PURCHASE',
             'order_description' => 'Thanh toan don hang '.$order->increment_id,
+            'payment_method' => 'BANK_TRANSFER',
             'order_invoice_number' => $invoiceNumber,
             'customer_id' => $order->customer_id ? (string) $order->customer_id : '',
             'success_url' => route('shop.sepay.gateway_return', ['status' => 'success', 'order' => $order->increment_id]),
