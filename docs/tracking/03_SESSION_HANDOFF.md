@@ -31,30 +31,31 @@
 
 ---
 
-## 2. Trạng Thái Bàn Giao Hiện Tại (Cập Nhật: Ngày 28/11/2026)
+## 2. Trạng Thái Bàn Giao Hiện Tại (Cập Nhật: Tối 28/11/2026)
 
-### [BÀN GIAO PHIÊN LÀM VIỆC — NGÀY 28/11/2026]
+### [BÀN GIAO PHIÊN LÀM VIỆC — NGÀY 28/11/2026 (CODE FREEZE)]
 
 1. **Phiên vừa rồi làm xong gì:**
-    - **Triển khai SePay Webhook + Nút giả lập Demo Offline:**
-        - Tạo `app/Services/SepayPaymentService.php` (`DB::transaction` + `lockForUpdate()` trên `orders`, đối soát `DH{increment_id}` và `transferAmount >= grand_total`, xuất hóa đơn qua `InvoiceRepository::create()`, lưu `order_transactions`, idempotency).
-        - Tạo `app/Http/Controllers/Shop/SepayWebhookController.php` với `POST /webhooks/sepay` (miễn CSRF tại `bootstrap/app.php`, xác thực `Authorization: Apikey` bằng `hash_equals`) và `POST /thanh-toan/sepay/mo-phong` (khóa bởi `app()->environment('local') && config('perfume_payment.sepay.allow_demo_simulation')`).
-        - Cập nhật `resources/themes/default/views/checkout/success.blade.php` (hiển thị badge đã thanh toán khi `!canInvoice()` hoặc nút giả lập khi ở Local + bật cờ).
-        - Bổ sung key dịch song ngữ tại `lang/vi/perfume.php` và `lang/en/perfume.php`.
-    - **Chuẩn bị sẵn biến `.env` & `.env.example`:** Bổ sung `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`, `VIETQR_*`, `SEPAY_API_TOKEN`, `SEPAY_ALLOW_DEMO_SIMULATION`.
-    - **Kiểm chứng:** `php -l` (5/5 file đạt), `pint --test` (passed), 6/6 unit assertion trên `SepayPaymentService` đạt. (`SepayWebhookTest.php` cần bật MySQL 3306 trên Laragon để chạy `ShopTestCase`).
+    - **Google OAuth 2.0:** Đồng bộ `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APP_URL=http://bagisto-store.com` giữa `.env` và `core_config`; cập nhật `LoginController.php` (`->stateless()` + `report($e)`). Đã test đăng nhập Google thành công.
+    - **SePay Sandbox Gateway & IPN `ORDER_PAID`:**
+        - Cập nhật `SepayPaymentService.php` ký HMAC-SHA256 Base64 theo đúng thứ tự trường của SDK chính thức (`sepayvn/sepay-pg-php`), truyền `payment_method=BANK_TRANSFER` nhảy thẳng vào màn hình QR VietQR (`choose_payment_method=0`).
+        - Cập nhật `OnepageController.php` gán `pending_payment` và chuyển hướng thẳng sang `/payment/sepay/checkout/{incrementId}`; `SepayWebhookController.php` hỗ trợ `X-Secret-Key` IPN `ORDER_PAID`, tự hủy đơn (`canceled`) khi `cancel_url`, tự xuất hóa đơn (`processing`) khi `success_url` / IPN.
+    - **Admin & Storefront UX:** Đổi toàn bộ route custom sang tiếng Anh (`/order-tracking`, `/payment/sepay/*`, `/webhooks/sepay`); chuyển link **Tra Cứu Đơn Hàng / Order Tracking** xuống Footer (`theme_section_translations`); thêm thanh lọc nhanh & dropdown chỉnh sửa trực tiếp 7 trạng thái đơn hàng trong Admin.
+    - **Thương hiệu Maison P&H & Hiệu năng:** Đổi tên shop sang **Maison P&H**, xóa nội dung `ShopSiuu` / `Gaming Gear` và link `localhost:8000` trong `theme_section_translations`, thay font `Be Vietnam Pro` & `Playfair Display`, chạy `import_perfume_images.php` (32 SP có ảnh), nối `public/storage` bằng `php artisan storage:link` (fix lỗi `403`), đồng bộ logo + favicon, tắt Compare, xóa 3 file ảnh thừa, chuyển sang Laragon Apache (`http://bagisto-store.com`) + `config:cache`, `route:cache`, `view:cache`.
+    - **Kiểm chứng & Commit:** `SepayWebhookTest.php` đạt **7/7 passed (14 assertions)**, Pint **passed**, đã commit lên `feature/vietnamese-localization` tại mốc `69bc508`.
 
 2. **Trạng thái Kỹ thuật & CSDL hiện tại:**
-    - **Nhánh Git hiện tại:** `feature/vietnamese-localization`.
-    - **Trạng thái Môi trường:** `APP_LOCALE=vi`, `APP_CURRENCY=VND`, `FILESYSTEM_DISK=public`, `SEPAY_ALLOW_DEMO_SIMULATION=true` (trong `.env`, `false` trong `.env.example`), `GOOGLE_CLIENT_ID` để trống. MySQL 3306 đang tắt tại thời điểm kết thúc phiên.
+    - **Nhánh Git hiện tại:** `feature/vietnamese-localization` (commit `69bc508`).
+    - **Số liệu CSDL thống nhất (khóa cứng cho báo cáo):** **143 sản phẩm** (**32** sản phẩm có ảnh), **50 đơn hàng** (`28/09/2026` – `28/11/2026`), **12 khách hàng**.
+    - **Trạng thái Môi trường:** Chạy Laragon Apache (`http://bagisto-store.com`), `APP_ENV=local`, `APP_LOCALE=vi`, `APP_CURRENCY=VND`, `MAIL_MAILER=log`, `DEBUGBAR_ENABLED=false`, đã bật `config:cache`, `route:cache`, `view:cache`.
 
 3. **Cảnh báo / Lưu ý quan trọng cho phiên sau:**
-    - Khi bật Laragon MySQL, chạy `php vendor/bin/pest packages/Webkul/Shop/tests/Feature/SepayWebhookTest.php` để nghiệm thu thêm luồng HTTP/Route, và kiểm tra `customer.settings.social_login.enable_google` trong `core_config` (chỉ đặt `= 1` sau khi điền `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET`).
+    - **CODE FREEZE từ 28/11/2026:** Không thêm tính năng hay package mới trước hạn nộp **08/12/2026**.
+    - Khi cần chạy lại `php artisan test`, nhớ chạy `php artisan optimize:clear` trước để `APP_ENV=testing` có hiệu lực, sau đó chạy lại `config:cache; route:cache; view:cache` cho Laragon.
     - Tuyệt đối **KHÔNG** push trực tiếp lên nhánh `main`.
-    - Sau mỗi lượt chạy phải in **Báo Cáo Tiến Độ 4 Dòng**.
 
 4. **HÀNH ĐỘNG CẦN THỰC HIỆN NGAY Ở PHIÊN TIẾP THEO:**
-    - Bật MySQL Laragon, chạy lại `SepayWebhookTest.php`, dọn cache (`php artisan optimize:clear`) và thực hiện **Giai đoạn 4.6 & Giai đoạn 5** (Test Cases ISTQB, Báo cáo Chuyên đề 1 & 2, Video demo trước 08/12/2026).
+    - **Giai đoạn 5.1 (28/11 – 29/11):** Export `mockdata/database_final.sql` mới nhất (bỏ `CREATE DATABASE`/`USE`), tổng hợp số liệu/ảnh 3 thực nghiệm CSDL (`bench_*`), và chụp trọn bộ ảnh UI mới **Maison P&H** trên `http://bagisto-store.com` để phục vụ biên tập 2 cuốn Chuyên đề trước hạn **08/12/2026**.
 
 ---
 

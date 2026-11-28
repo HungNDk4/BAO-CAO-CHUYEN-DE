@@ -135,16 +135,30 @@
 - [x] **4.5 Hoàn tất xuất bản CSDL cuối cùng:** Xuất `mockdata/database_final.sql` sau khi hoàn thành toàn bộ tính năng.
 - [x] **4.5B Tích hợp SePay Webhook + Nút giả lập Demo Offline & Chuẩn bị Google OAuth (28/11/2026):**
   - Triển khai [SepayPaymentService.php](file:///d:/CD12/bagisto-store/app/Services/SepayPaymentService.php) dùng `DB::transaction()` + `lockForUpdate()` trên `orders`, kiểm tra `canInvoice()`, gọi `InvoiceRepository::create()` và ghi `order_transactions` (chống trùng lặp idempotency).
-  - Triển khai [SepayWebhookController.php](file:///d:/CD12/bagisto-store/app/Http/Controllers/Shop/SepayWebhookController.php) với route `POST /webhooks/sepay` (miễn CSRF trong [bootstrap/app.php](file:///d:/CD12/bagisto-store/bootstrap/app.php), xác thực `Authorization: Apikey` bằng `hash_equals`) và route `POST /thanh-toan/sepay/mo-phong` khóa chặt bởi `app()->environment('local') && config('perfume_payment.sepay.allow_demo_simulation')`.
-  - Cập nhật [success.blade.php](file:///d:/CD12/bagisto-store/resources/themes/default/views/checkout/success.blade.php), [perfume_payment.php](file:///d:/CD12/bagisto-store/config/perfume_payment.php), `lang/vi/perfume.php`, `lang/en/perfume.php`, `.env`, `.env.example` (chuẩn bị sẵn `GOOGLE_*`, `VIETQR_*`, `SEPAY_*`).
-- [ ] **4.6 Nghiệm thu 20 Test Cases ISTQB gốc trên giao diện & điền vào Báo cáo Chuyên đề 2:** Cập nhật bảng kết quả 20 TC gốc + 5 TC bổ sung (`TC-21`..`TC-25`), Ma trận RTM và ISO/IEC 25010 vào file báo cáo của Phát.
+  - Triển khai [SepayWebhookController.php](file:///d:/CD12/bagisto-store/app/Http/Controllers/Shop/SepayWebhookController.php) với route `POST /webhooks/sepay` (miễn CSRF trong [bootstrap/app.php](file:///d:/CD12/bagisto-store/bootstrap/app.php), xác thực `Authorization: Apikey` bằng `hash_equals`).
+- [x] **4.5C Hoàn thiện SePay Sandbox Gateway, Google OAuth, Thương hiệu Maison P&H & Tối ưu Laragon (28/11/2026 — Code Freeze tại commit `69bc508`):**
+  - **Google OAuth 2.0:** Đồng bộ `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APP_URL=http://bagisto-store.com` giữa `.env` và `core_config`; bổ sung `->stateless()` + `report($e)` trong [LoginController.php](file:///d:/CD12/bagisto-store/packages/Webkul/SocialLogin/src/Http/Controllers/LoginController.php).
+  - **SePay Sandbox Gateway & IPN:** Ký HMAC-SHA256 Base64 chuẩn SDK `sepayvn/sepay-pg-php`, truyền `payment_method=BANK_TRANSFER` nhảy thẳng sang màn hình QR (`choose_payment_method=0`), hỗ trợ `X-Secret-Key` IPN `ORDER_PAID`, tự gán `pending_payment` khi đặt đơn, tự hủy (`canceled`) khi `cancel_url`, tự xuất hóa đơn (`processing`) khi `success_url` / IPN; kiểm thử `SepayWebhookTest.php` đạt **7/7 passed (14 assertions)**, Pint **passed**.
+  - **Quản lý đơn hàng & Chuẩn hóa URL:** Đổi route sang tiếng Anh (`/order-tracking`, `/payment/sepay/*`, `/webhooks/sepay`), đưa link **Tra Cứu Đơn Hàng / Order Tracking** xuống Footer, thêm thanh lọc nhanh + dropdown chỉnh sửa trực tiếp **7 trạng thái đơn hàng** trong Admin.
+  - **Thương hiệu Maison P&H & Hiệu năng:** Đổi tên shop sang **Maison P&H**, thay font `Be Vietnam Pro` & `Playfair Display`, nối `public/storage` bằng `php artisan storage:link`, đồng bộ logo/favicon cho Storefront & Admin, tắt Compare (`compare_option = 0`), chạy Laragon Apache (`http://bagisto-store.com`) + `config:cache`, `route:cache`, `view:cache`.
+- [ ] **4.6 Hoàn thiện bộ 25 Test Cases ISTQB & Tài liệu kiểm thử (30/11 – 01/12/2026):** Lập bảng EP/BVA, Ma trận RTM, 25 Test Cases (20 ca cốt lõi + 5 ca mới cho Google OAuth, SePay QR/Hủy đơn, Tra cứu đơn, Lọc 7 trạng thái Admin) kèm nhật ký lỗi thực tế.
 
 ---
 
-## Giai Đoạn 5: Biên Tập 2 Cuốn Báo Cáo & Chuẩn Bị Bảo Vệ Đồ Án
+## Giai Đoạn 5: Lộ Trình 10 Ngày Cuối — Minh Chứng, Biên Tập 2 Báo Cáo & Bảo Vệ (28/11 – 08/12/2026)
 
-- [ ] **5.1 Hoàn thiện Báo cáo Chuyên đề 1 (Nguyễn Duy Hùng):** Kiến trúc Bagisto 2.4.x, Bản địa hóa, Tối ưu hóa CSDL & 3 bài thực nghiệm benchmark.
-- [ ] **5.2 Hoàn thiện Báo cáo Chuyên đề 2 (Phát):** Quản trị dự án Jira, Quy trình kiểm thử ISTQB, 20 Test Cases & Đánh giá ISO/IEC 25010.
-- [ ] **5.3 Khử văn phong AI & Đối soát chéo số liệu:** Đảm bảo 100% số liệu giữa 2 cuốn khớp nhau hoàn toàn (số bảng, số key dịch, thời gian benchmark, số lượng đơn hàng, test case pass rate).
-- [ ] **5.4 Sản xuất Video Demo Offline (2,5 – 3 phút):** Quay màn hình demo trơn tru từ lúc khởi động offline -> duyệt shop -> mua hàng -> admin xử lý.
-- [ ] **5.5 Luyện tập 30 câu hỏi - đáp trước Hội đồng:** Ôn tập các câu hỏi hóc búa về EAV, Race Condition, FULLTEXT ngram, ISO 25010.
+- [ ] **5.1 (28/11 – 29/11) Đóng gói DB & Thu hoạch bộ ảnh minh chứng:**
+  - **Hùng:** Export `mockdata/database_final.sql` mới nhất (bỏ `CREATE DATABASE`/`USE`), đồng bộ sang máy Phát; tổng hợp số liệu & chụp ảnh kết quả 3 thực nghiệm CSDL (`bench_*`) + ảnh ERD/Bcrypt (`143` SP / `32` SP có ảnh, `50` đơn hàng, `12` khách hàng).
+  - **Phát:** Chụp trọn bộ ảnh UI mới **Maison P&H** trên `http://bagisto-store.com` (Storefront, Google OAuth, SePay QR, `/order-tracking`, Admin lọc & sửa 7 trạng thái) + ảnh Jira Kanban & lịch sử commit GitHub tới `69bc508`.
+- [ ] **5.2 (30/11 – 01/12) Hoàn thiện nội dung thực nghiệm CSDL & Kiểm thử ISTQB:**
+  - **Hùng:** Viết Chương 3 & Chương 4 Chuyên đề 1 (EAV vs `product_flat`, `EXPLAIN ANALYZE`, `SELECT ... FOR UPDATE`, `mysqldump`) và sửa **Mục 4.5** theo ghi chú GVHD.
+  - **Phát:** Hoàn thiện EP/BVA, RTM, **25 Test Cases ISTQB** và nhật ký lỗi thật (lỗi `client_id` OAuth, lỗi Cloudflare WAF chặn `127.0.0.1`).
+- [ ] **5.3 (02/12 – 05/12) Biên tập hoàn chỉnh 2 cuốn Chuyên đề từ bản cũ:**
+  - Cập nhật Trang bìa & Bảng phân công còn **2 thành viên (Hùng & Phát)**, thêm **Tuyên bố liêm chính học thuật** và **Bảng thuật ngữ Việt – Anh**.
+  - **Chuyên đề 1 (Hùng):** Thay toàn bộ số liệu cũ bằng dữ liệu `Maison P&H` (`143` SP / `32` SP có ảnh, `50` đơn, `12` khách hàng) và ảnh thực nghiệm mới.
+  - **Chuyên đề 2 (Phát):** Thống nhất quy trình **Agile/Kanban**, bổ sung sơ đồ luồng SePay (VietQR) & Bảng 7 trạng thái đơn hàng, dán ảnh UI mới, 25 Test Cases, sửa **Mục 4.4 / 5.3** và cập nhật bảng đánh giá **ISO/IEC 25010**.
+- [ ] **5.4 (06/12 – 07/12) Hậu kỳ, Khử văn phong AI & Quay Video Demo (2,5–3 phút):**
+  - Viết lại văn phong tự nhiên, bổ sung Tài liệu tham khảo (Tiếng Việt & Tiếng Anh), đối soát chéo 100% số liệu giữa 2 cuốn.
+  - Quay sẵn **Video Demo 2,5–3 phút** chạy luồng hoàn chỉnh trên `http://bagisto-store.com` (Google Login $\rightarrow$ Đặt hàng $\rightarrow$ SePay QR Giả lập thanh toán $\rightarrow$ Admin duyệt đơn) làm phương án dự phòng.
+- [ ] **5.5 (08/12) Nộp hồ sơ bảo vệ đúng hạn:**
+  - Bấm `Update Field` cập nhật số trang Mục lục/Danh mục Hình/Bảng ở cả 2 file Word, xuất PDF kiểm tra không lỗi font/tràn lề, đóng gói mã nguồn + DB + Video Demo nộp đúng hạn **08/12/2026** (bảo vệ **14/12 – 23/12/2026**).

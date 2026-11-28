@@ -7,14 +7,21 @@
 
 ## 1. Thông Tin Tổng Quan Dự Án
 
-- **Tên dự án:** Cửa Hàng Nước Hoa Cao Cấp (Perfume Store — "Shop Siuu" / Luxury Fragrance Platform).
-- **Mục tiêu chuyên đề:** Chuyển đổi toàn diện từ đồ án demo công nghệ sang **Shop Nước Hoa Chuẩn Bản Địa Hóa Tiếng Việt (hỗ trợ Song ngữ Việt – Anh)**.
-- **Mục tiêu bảo vệ:** Chạy **100% trên môi trường Localhost (Offline)**, vận hành độc lập, không phụ thuộc kết nối Internet hay dịch vụ đám mây bên ngoài khi trình bày trực tiếp trước Hội đồng chấm Chuyên đề tốt nghiệp.
+- **Tên dự án:** **Maison P&H** — Hệ thống Thương mại Điện tử Nước Hoa Chính Hãng (Song ngữ Việt – Anh).
+- **Bối cảnh & Chiến lược (Cập nhật 28/11/2026):**
+  - Nhóm 3 thành viên tách ra trước đó đã chuyển sang phát triển một hệ thống web khác hoàn toàn, nên nhóm 2 thành viên (**Nguyễn Duy Hùng & Phát**) không còn rủi ro trùng lặp ý tưởng hay phải né phạm vi.
+  - Nhóm **giữ nguyên và nâng cấp toàn bộ nền tảng Bagisto + 2 cuốn báo cáo cũ** (không phải làm lại từ đầu), tận dụng tối đa các tính năng kỹ thuật thực tế đã hoàn thiện trên hệ thống **Maison P&H**.
+- **Mốc thời gian bảo vệ:**
+  - **Code Freeze:** Từ **28/11/2026** (dừng thêm tính năng mới, dồn 100% thời gian sang xuất DB, chụp minh chứng, kiểm thử & biên tập báo cáo).
+  - **Hạn nộp hồ sơ bảo vệ (2 cuốn báo cáo PDF, mã nguồn + DB, video demo):** **08/12/2026**.
+  - **Công bố danh sách bảo vệ:** **11/12/2026** | **Bảo vệ trực tiếp:** **14/12 – 23/12/2026**.
+- **Mục tiêu vận hành & Demo:**
+  - Vận hành đa luồng trên **Laragon Apache (`http://bagisto-store.com`)**, kết hợp demo live **Google OAuth 2.0** và **Cổng thanh toán SePay Sandbox (VietQR & IPN)** khi có Internet, kèm **Video Demo 2,5–3 phút** quay sẵn làm phương án dự phòng.
 - **Ngăn xếp công nghệ (Tech Stack):**
-  - **Framework / Core:** Bagisto 2.4.x chạy trên nền Laravel 12 (PHP 8.3–8.4).
+  - **Framework / Core:** Bagisto 2.4.x chạy trên nền Laravel 12 (PHP 8.3).
   - **Cơ sở dữ liệu:** MySQL 8.4 (InnoDB, EAV Architecture, UTF8MB4).
-  - **Frontend:** Vue 3, Tailwind CSS 3, Vite 6, Blade Templates.
-  - **Môi trường phát triển:** Laragon trên hệ điều hành Windows.
+  - **Số liệu CSDL khóa cứng cho báo cáo:** **143 sản phẩm** (trong đó **32 sản phẩm** đã đồng bộ đầy đủ hình ảnh từ `picturetemplate/`), **50 đơn hàng** (`28/09/2026` – `28/11/2026`, đủ 7 trạng thái), **12 khách hàng**.
+  - **Frontend:** Vue 3, Tailwind CSS 3, Vite 6, Blade Templates (Font `Be Vietnam Pro` & `Playfair Display`).
 
 ---
 
@@ -22,65 +29,41 @@
 
 | Thành viên | Vai trò | Nhiệm vụ chính & Trách nhiệm báo cáo |
 |---|---|---|
-| **Nguyễn Duy Hùng** | **Leader / Tech Lead** | - Quản trị kiến trúc hệ thống Bagisto, hạ tầng Windows/Laragon, Git repository.<br>- Chịu trách nhiệm toàn bộ công tác Bản địa hóa (Việt hóa giao diện Core, Shop, Admin, Packages).<br>- Thiết kế, tối ưu hóa CSDL (EAV, Indexing, Transactions, Backup).<br>- Chủ biên cuốn **Báo cáo Chuyên đề 1** (Kiến trúc hệ thống, Bản địa hóa & Cơ sở dữ liệu nâng cao). |
-| **Phát** | **QA / Content & Visual** | - Quản trị tiến độ trên bảng Jira Kanban 2 người.<br>- Thiết kế nhận diện thương hiệu, hệ thống banner, hình ảnh nước hoa.<br>- Nhập liệu sản phẩm thực tế, kiểm thử chất lượng chức năng (Black-box Testing).<br>- Chủ biên cuốn **Báo cáo Chuyên đề 2** (Kiểm thử phần mềm chuẩn ISTQB & Đánh giá chất lượng ISO/IEC 25010). |
+| **Nguyễn Duy Hùng** | **Leader / Tech Lead** | - Quản trị kiến trúc hệ thống Bagisto, hạ tầng Windows/Laragon Apache (`http://bagisto-store.com`), Git repository.<br>- Bản địa hóa, tích hợp Google OAuth 2.0, Cổng thanh toán SePay Sandbox (VietQR & IPN), Admin 7 trạng thái đơn hàng.<br>- Thực nghiệm tối ưu CSDL (EAV, Indexing, `SELECT ... FOR UPDATE`, `mysqldump`).<br>- Chủ biên cuốn **Báo cáo Chuyên đề 1** (Kiến trúc hệ thống, Bản địa hóa & Cơ sở dữ liệu nâng cao). |
+| **Phát** | **QA / Content & Visual** | - Quản trị tiến độ trên bảng Jira Kanban 2 người.<br>- Nhận diện thương hiệu **Maison P&H**, hình ảnh sản phẩm/banner, chụp trọn bộ ảnh minh chứng UI.<br>- Kiểm thử hộp đen chuẩn ISTQB (EP/BVA, Ma trận RTM, 25 Test Cases) & Đánh giá ISO/IEC 25010.<br>- Chủ biên cuốn **Báo cáo Chuyên đề 2** (Kiểm thử phần mềm chuẩn ISTQB & Đánh giá chất lượng ISO/IEC 25010). |
 
 ---
 
 ## 3. Bốn (04) Trụ Cột Tự Làm — Trọng Tâm Bảo Vệ Trước Hội Đồng
 
-Để khẳng định khối lượng công việc thực chất tự xây dựng (không chỉ dừng ở việc cài đặt Bagisto mặc định), nhóm tập trung bảo vệ 4 trụ cột chuyên môn sâu:
-
-### Trụ cột 1: Bản Địa Hóa Toàn Diện + Cô Lập Vận Hành Offline + Tự Động Hóa (`setup.bat`)
-- Bản địa hóa 100% toàn bộ chuỗi giao diện: **1.319 key** Storefront (`Shop`), **4.496 key** Bảng quản trị (`Admin`), cùng toàn bộ packages phụ trợ (`Product`, `Customer`, `Attribute`, `Core`, `lang/vi/`).
-- Cô lập hoàn toàn chế độ Offline: Vô hiệu hóa các dịch vụ bên thứ ba đòi hỏi internet (Google Social Login, Facebook Login, Google reCAPTCHA, PayPal, Stripe), chỉ giữ phương thức thanh toán nội địa (COD, Chuyển khoản ngân hàng).
-- Xây dựng file thực thi tự động `setup.bat`: Tự sinh `.env`, đồng bộ tài nguyên hình ảnh từ `storage/app/public/` sang `public/storage/` (khắc phục triệt để lỗi symlink trên Windows), tự làm sạch cache chỉ với 1 click.
-
-### Trụ cột 2: Thực Nghiệm Hiệu Năng Truy Vấn CSDL với `EXPLAIN ANALYZE`
-- Xây dựng bài đo lường thực nghiệm khoa học trên bảng benchmark riêng biệt `exp_product_search_bench`, đối chứng hiệu năng tìm kiếm tiếng Việt trên tập dữ liệu sản phẩm:
-  $$\text{Query LIKE \%...\%} \quad \text{vs} \quad \text{B-Tree Index} \quad \text{vs} \quad \text{FULLTEXT Index (ngram)}$$
-- Khảo sát các trường hợp: tiếng Việt có dấu, không dấu, từ ngắn 2–3 ký tự.
-- Sử dụng công cụ `EXPLAIN ANALYZE` của MySQL 8.4 để phân tích chi phí truy vấn (Query Cost), số lượng dòng duyệt qua (Rows Examined) và thời gian thực thi thực tế (Execution Time tính bằng mili-giây).
-
-### Trụ cột 3: Mô Phỏng Giao Dịch Đồng Thời (Concurrency) & Khóa Bi Quan (`SELECT ... FOR UPDATE`)
-- Thiết lập kịch bản tranh chấp tài nguyên tồn kho (Race Condition / Overselling) khi nhiều tiến trình/người dùng cùng đặt mua sản phẩm có số lượng tồn kho giới hạn (`qty = 1` và `qty = 5`).
-- Xây dựng thực nghiệm đối chứng trên bản sao bảng tồn kho (`exp_product_inventories`), ghi chú rõ đây là mô phỏng tầng CSDL:
-  - *Trường hợp 1 (Không khóa):* Dẫn đến sai lệch dữ liệu tồn kho (âm kho).
-  - *Trường hợp 2 (Khóa bi quan):* Áp dụng `SELECT ... FOR UPDATE` trong Database Transaction của Laravel $\rightarrow$ dữ liệu toàn vẹn tuyệt đối.
-- Thiết lập quy trình sao lưu và phục hồi CSDL tự động bằng `mysqldump` (kèm cờ `--single-transaction --routines --triggers --events`), xác thực tính toàn vẹn dữ liệu trước và sau sao lưu bằng `COUNT(*)` và `CHECKSUM TABLE`.
-
-### Trụ cột 4: Kiểm Thử Hộp Đen Chuẩn ISTQB & Đánh Giá Chất Lượng ISO/IEC 25010
-- Áp dụng các kỹ thuật thiết kế ca kiểm thử hộp đen tiêu chuẩn quốc tế: Phân vùng tương đương (Equivalence Partitioning - EP) và Phân tích giá trị biên (Boundary Value Analysis - BVA).
-- Xây dựng Ma trận truy xuất nguồn gốc yêu cầu (Requirements Traceability Matrix - RTM) gắn liền với bộ **20 Test Cases chi tiết** được thực thi trực tiếp trên giao diện tiếng Việt.
-- Đánh giá mức độ hoàn thiện chất lượng phần mềm theo bộ 8 đặc tính tiêu chuẩn quốc tế **ISO/IEC 25010** (Functional Suitability, Reliability, Performance Efficiency, Usability, Security, Maintainability, Portability, Compatibility).
+1. **Bản địa hóa & Tùy biến thương hiệu Maison P&H (Bagisto 2.4.x):**
+   - Việt hóa toàn diện (**1.319 key** Storefront, **4.496 key** Admin), chuẩn hóa font tiếng Việt `Be Vietnam Pro` & `Playfair Display`, đồng bộ logo/favicon cho Storefront & Admin, tối ưu hiệu năng đa luồng trên Laragon Apache (`config:cache`, `route:cache`, `view:cache`).
+   - Mở rộng EAV (*Dung tích, Nhóm hương, Nồng độ*), Kim tự tháp 3 tầng hương, Scent Finder Quiz (`/tim-mui-huong`), **Tra cứu đơn hàng (`/order-tracking`)** ở Footer, và **Bộ lọc nhanh + chỉnh sửa trực tiếp 7 trạng thái đơn hàng** trong Admin.
+2. **Tích hợp Thanh toán SePay (VietQR & IPN) + Đăng nhập Google OAuth 2.0:**
+   - Xây dựng `SepayPaymentService` ký HMAC-SHA256 Base64 chuẩn SDK `sepayvn/sepay-pg-php`, truyền `payment_method=BANK_TRANSFER` nhảy thẳng vào màn hình QR (`choose_payment_method=0`), tự động hủy đơn (`canceled`) khi `cancel_url`, tự động xuất hóa đơn trong `DB::transaction()` + `lockForUpdate()` khi nhận IPN `ORDER_PAID` (`X-Secret-Key`) hoặc `success_url`.
+   - Cấu hình Google OAuth 2.0 (`stateless()` callback, đồng bộ `.env` và `core_config`), kèm kiểm thử tự động Pest `SepayWebhookTest.php` (`7/7 passed`, `14 assertions`).
+3. **Thực nghiệm tối ưu CSDL MySQL 8.4 (`EXPLAIN ANALYZE`, Khóa bi quan `SELECT ... FOR UPDATE` & `mysqldump`):**
+   - Đo hiệu năng tìm kiếm tiếng Việt (`LIKE` vs `B-Tree` vs `FULLTEXT`) trên `exp_product_search_bench` (`10k / 100k / 500k` dòng).
+   - Mô phỏng tranh chấp tồn kho (`exp_product_inventories`) đối chứng có/không `SELECT ... FOR UPDATE`, và sao lưu/phục hồi `mysqldump` đối chiếu `COUNT(*)` + `CHECKSUM TABLE`.
+4. **Kiểm thử hộp đen chuẩn ISTQB & Đánh giá chất lượng ISO/IEC 25010:**
+   - Thiết kế Phân hoạch tương đương (EP), Giá trị biên (BVA), Ma trận truy vết (RTM) và thực thi **25 Test Cases** (20 ca cốt lõi + 5 ca mới cho Google OAuth, SePay QR/Hủy đơn, Tra cứu đơn `/order-tracking`, Lọc 7 trạng thái Admin) kèm nhật ký lỗi thực tế.
 
 ---
 
 ## 4. Các Ràng Buộc Kỹ Thuật Tuyệt Đối (Guardrails)
 
-1. **KHÔNG đập đi xây lại giao diện lõi Vue 3 / Blade của Bagisto:**  
-   Mọi tùy biến phải tuân thủ kiến trúc mô-đun của Bagisto, ghi đè qua view component hoặc cấu hình theme; tuyệt đối không can thiệp thô bạo vào core framework gây xung đột khi nâng cấp.
-2. **KHÔNG dàn dựng lỗi giả (Fake Bugs):**  
-   Tất cả các lỗi ghi nhận trong nhật ký lỗi và báo cáo kiểm thử (BUG-01, BUG-02...) phải là **lỗi kỹ thuật thật** phát sinh trong quá trình dev/test thực tế (như lỗi ký tự quote làm vỡ Vue runtime, lỗi format tiền tệ VND, lỗi junction ảnh Windows...).
-3. **KHÔNG sửa Mục 4.5 trong Báo cáo Chuyên đề 1:**  
-   Tuyệt đối giữ nguyên hiện trạng mục này cho đến khi có ý kiến và ghi chú chỉ đạo gốc từ GVHD (thầy Nguyễn Hoàng Minh Nhật).
-4. **Bảo mật và an toàn thông tin:**  
-   Kiểm soát chặt chẽ file `.env` và `.gitignore`, tuyệt đối không commit các mã khóa API (như Cloudinary API keys, Database credentials thực tế) lên GitHub.
-5. **Minh bạch bản quyền và học thuật:**  
-   Tất cả hình ảnh sản phẩm do AI tạo hoặc dữ liệu sản phẩm thử nghiệm chỉ được sử dụng với mục đích minh họa học thuật phi thương mại, trên nền tảng mã nguồn mở giấy phép MIT của Bagisto.
+1. **Code Freeze từ 28/11/2026:** Không thêm tính năng mới hoặc cài package mới để tránh rủi ro sát ngày nộp **08/12/2026**.
+2. **KHÔNG dàn dựng lỗi giả (Fake Bugs):** Tất cả lỗi ghi nhận trong báo cáo kiểm thử phải là **lỗi thật** đã gặp khi phát triển/test (lỗi thiếu `client_id` OAuth, lỗi Cloudflare WAF chặn `127.0.0.1` của SePay, lỗi symlink `public/storage` `403`, lỗi font tiếng Việt...).
+3. **Sửa Mục 4.5 (CĐ1) & Mục 4.4 / 5.3 (CĐ2):** Thực hiện chỉnh sửa đúng theo ghi chú gốc của GVHD (thầy Nguyễn Hoàng Minh Nhật) trong giai đoạn biên tập báo cáo.
+4. **Bảo mật & An toàn thông tin:** Không commit `.env` hay secret key thật lên GitHub.
+5. **Minh bạch học thuật:** Bổ sung Tuyên bố liêm chính học thuật và Tài liệu tham khảo Tiếng Việt – Tiếng Anh đầy đủ ở cả 2 cuốn.
 
 ---
 
 ## 5. Quy Tắc Cập Nhật Bắt Buộc Sau Mỗi Lượt Chạy (Mandatory Turn Protocol)
 
-Sau khi hoàn thành bất kỳ tác vụ nào trong quá trình thực thi, Agent **BẮT BUỘC** thực hiện đồng bộ 4 bước sau:
-1. Cập nhật tiến độ vào [01_ROADMAP_AND_TODO.md](file:///d:/CD12/bagisto-store/docs/tracking/01_ROADMAP_AND_TODO.md) (chuyển trạng thái `[ ]` sang `[x]`).
-2. Ghi nhận nhật ký kỹ thuật, bài học hoặc lỗi thật mới (nếu có) vào [02_TECHNICAL_NOTES_AND_BUGS.md](file:///d:/CD12/bagisto-store/docs/tracking/02_TECHNICAL_NOTES_AND_BUGS.md).
+Sau khi hoàn thành bất kỳ tác vụ nào trong quá trình thực thi, Agent **BẮT BUỘC** thực hiện đồng bộ:
+1. Cập nhật tiến độ vào [01_ROADMAP_AND_TODO.md](file:///d:/CD12/bagisto-store/docs/tracking/01_ROADMAP_AND_TODO.md).
+2. Ghi nhận nhật ký kỹ thuật/lỗi thật mới (nếu có) vào [02_TECHNICAL_NOTES_AND_BUGS.md](file:///d:/CD12/bagisto-store/docs/tracking/02_TECHNICAL_NOTES_AND_BUGS.md).
 3. Cập nhật phiếu bàn giao phiên làm việc tại [03_SESSION_HANDOFF.md](file:///d:/CD12/bagisto-store/docs/tracking/03_SESSION_HANDOFF.md).
-4. In ra **Báo Cáo Tiến Độ 4 Dòng** ở cuối câu trả lời theo đúng định dạng:
-   ```text
-   - [Giai đoạn] <Tên giai đoạn & Tác vụ vừa hoàn thành>
-   - [Trạng thái kỹ thuật] <Nhánh Git / Trạng thái DB / Localhost Server>
-   - [Số liệu kiểm chứng] <Bằng chứng số liệu thật, lệnh CLI / kết quả kiểm thử>
-   - [Kế hoạch kế tiếp] <Hành động cụ thể cần làm ngay trong bước tiếp theo>
-   ```
+4. In ra **Báo Cáo Tiến Độ 4 Dòng** ở cuối câu trả lời.
